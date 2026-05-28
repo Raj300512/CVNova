@@ -46,8 +46,9 @@ app.config['SECRET_KEY'] = _secret_key
 
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max
 app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///users.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///users.db').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True, "pool_recycle": 300}
 
 # ─── Session Cookie Security ──────────────────────────────────────────────────
 app.config['SESSION_COOKIE_HTTPONLY'] = True   # JS se cookie access nahi hogi
