@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — Interview Answer Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <style>
+        .ab-container { max-width: 1000px; margin: 0 auto; padding: 100px 24px 60px; }
+        .ab-hero { text-align: center; margin-bottom: 40px; }
+        .ab-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .ab-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+        .ab-label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+        .ab-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+        .ab-input:focus { border-color: #bb86fc; }
+        .ab-textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; min-height: 120px; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+        .ab-textarea:focus { border-color: #bb86fc; }
+        .ab-select { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; cursor: pointer; }
+        .ab-btn { padding: 12px 24px; background: linear-gradient(135deg, #7c4dff, #bb86fc); border: none; border-radius: 10px; color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .ab-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,77,255,0.4); }
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-tab { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        .filter-tab.active { background: rgba(124,77,255,0.15); border-color: #bb86fc; color: #bb86fc; }
+        .answer-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: border-color 0.2s; }
+        .answer-card:hover { border-color: rgba(187,134,252,0.3); }
+        .answer-question { font-weight: 600; font-size: 0.95rem; margin-bottom: 10px; color: var(--text-primary); }
+        .answer-text { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; }
+        .answer-meta { display: flex; gap: 12px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+        .cat-badge { padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .cat-technical { background: rgba(3,218,197,0.15); color: #03dac5; }
+        .cat-behavioral { background: rgba(255,167,38,0.15); color: #ffa726; }
+        .cat-general { background: rgba(187,134,252,0.15); color: #bb86fc; }
+        .stars { display: flex; gap: 2px; }
+        .star { cursor: pointer; font-size: 1rem; color: rgba(255,255,255,0.2); transition: color 0.1s; }
+        .star.filled { color: #ffa726; }
+        .answer-actions { display: flex; gap: 8px; margin-left: auto; }
+        .icon-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; color: var(--text-secondary); transition: all 0.2s; }
+        .icon-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+        .icon-btn.delete:hover { color: #ff5252; background: rgba(255,82,82,0.1); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+        .empty-state svg { opacity: 0.3; margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+{% include 'partials/header.html' %}
+
+<main class="ab-container fade-in">
+    <div class="ab-hero">
+        <h1>📚 Interview <span class="gradient-text">Answer Bank</span></h1>
+        <p style="color:var(--text-secondary)">Save your best interview answers and build a personal library for future interviews.</p>
+    </div>
+
+    <!-- Add New Answer -->
+    <div class="ab-card">
+        <h3 style="margin-bottom:20px;">➕ Save New Answer</h3>
+        <div style="margin-bottom:16px;">
+            <label class="ab-label" for="abQuestion">Interview Question</label>
+            <input type="text" id="abQuestion" class="ab-input" placeholder="e.g. Tell me about yourself">
+        </div>
+        <div style="margin-bottom:16px;">
+            <label class="ab-label" for="abAnswer">Your Answer</label>
+            <textarea id="abAnswer" class="ab-textarea" placeholder="Write your best answer here..."></textarea>
+        </div>
+        <div class="form-row">
+            <div>
+                <label class="ab-label" for="abCategory">Category</label>
+                <select id="abCategory" class="ab-select">
+                    <option value="general">General</option>
+                    <option value="technical">Technical</option>
+                    <option value="behavioral">Behavioral</option>
+                </select>
+            </div>
+            <div>
+                <label class="ab-label" for="abRole">Role (optional)</label>
+                <input type="text" id="abRole" class="ab-input" placeholder="e.g. Software Engineer">
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:4px;">
+            <div>
+                <label class="ab-label">Self Rating</label>
+                <div class="stars" id="ratingStars">
+                    <span class="star" data-val="1">★</span>
+                    <span class="star" data-val="2">★</span>
+                    <span class="star" data-val="3">★</span>
+                    <span class="star" data-val="4">★</span>
+                    <span class="star" data-val="5">★</span>
+                </div>
+            </div>
+            <button class="ab-btn" id="saveAnswerBtn" style="margin-top:20px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Answer
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter & List -->
+    <div class="ab-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+            <h3>My Answer Library</h3>
+            <input type="text" id="searchAnswers" class="ab-input" placeholder="🔍 Search questions..." style="max-width:260px;">
+        </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterAnswers('all')">All</button>
+            <button class="filter-tab" onclick="filterAnswers('technical')">Technical</button>
+            <button class="filter-tab" onclick="filterAnswers('behavioral')">Behavioral</button>
+            <button class="filter-tab" onclick="filterAnswers('general')">General</button>
+        </div>
+        <div id="answersList"></div>
+    </div>
+</main>
+
+<script>
+let allAnswers = [];
+let currentFilter = 'all';
+let currentRating = 0;
+
+// Star rating
+document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', () => {
+        currentRating = parseInt(star.dataset.val);
+        updateStars(currentRating);
+    });
+    star.addEventListener('mouseover', () => updateStars(parseInt(star.dataset.val)));
+    star.addEventListener('mouseout', () => updateStars(currentRating));
+});
+
+function updateStars(val) {
+    document.querySelectorAll('.star').forEach(s => s.classList.toggle('filled', parseInt(s.dataset.val) <= val));
+}
+
+// Save answer
+document.getElementById('saveAnswerBtn').addEventListener('click', async () => {
+    const question = document.getElementById('abQuestion').value.trim();
+    const answer = document.getElementById('abAnswer').value.trim();
+    if (!question || !answer) { alert('Please fill in both question and answer.'); return; }
+
+    const resp = await fetch('/api/interview-answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            question, answer,
+            category: document.getElementById('abCategory').value,
+            role: document.getElementById('abRole').value,
+            rating: currentRating || null
+        })
+    });
+    if (resp.ok) {
+        document.getElementById('abQuestion').value = '';
+        document.getElementById('abAnswer').value = '';
+        document.getElementById('abRole').value = '';
+        currentRating = 0;
+        updateStars(0);
+        loadAnswers();
+    }
+});
+
+// Load answers
+async function loadAnswers() {
+    const resp = await fetch('/api/interview-answers');
+    allAnswers = await resp.json();
+    renderAnswers();
+}
+
+function filterAnswers(cat) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase() === cat || (cat === 'all' && t.textContent === 'All')));
+    renderAnswers();
+}
+
+document.getElementById('searchAnswers').addEventListener('input', renderAnswers);
+
+function renderAnswers() {
+    const search = document.getElementById('searchAnswers').value.toLowerCase();
+    let filtered = allAnswers.filter(a => {
+        const matchCat = currentFilter === 'all' || a.category === currentFilter;
+        const matchSearch = !search || a.question.toLowerCase().includes(search) || a.answer.toLowerCase().includes(search);
+        return matchCat && matchSearch;
+    });
+
+    const list = document.getElementById('answersList');
+    if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>No answers saved yet. Add your first answer above!</p></div>`;
+        return;
+    }
+
+    list.innerHTML = filtered.map(a => `
+        <div class="answer-card">
+            <div class="answer-question">Q: ${escHtml(a.question)}</div>
+            <div class="answer-text">${escHtml(a.answer)}</div>
+            <div class="answer-meta">
+                <span class="cat-badge cat-${a.category}">${a.category}</span>
+                ${a.role ? `<span style="font-size:0.78rem;color:var(--text-secondary);">${escHtml(a.role)}</span>` : ''}
+                ${a.rating ? `<div class="stars">${'★'.repeat(a.rating)}<span style="color:rgba(255,255,255,0.2)">${'★'.repeat(5 - a.rating)}</span></div>` : ''}
+                <span style="font-size:0.75rem;color:rgba(255,255,255,0.3);">${new Date(a.created_at).toLocaleDateString()}</span>
+                <div class="answer-actions">
+                    <button class="icon-btn" onclick="copyAnswer(${a.id})" title="Copy answer">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                    <button class="icon-btn delete" onclick="deleteAnswer(${a.id})" title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function copyAnswer(id) {
+    const a = allAnswers.find(x => x.id === id);
+    if (a) { navigator.clipboard.writeText(a.answer); }
+}
+
+async function deleteAnswer(id) {
+    if (!confirm('Delete this answer?')) return;
+    await fetch(`/api/interview-answers/${id}`, { method: 'DELETE' });
+    loadAnswers();
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.addEventListener('DOMContentLoaded', loadAnswers);
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — AI Cover Letter Generator</title>
+    <meta name="description"
+        content="Generate tailored, professional cover letters instantly using AI. Powered by your resume and job description.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="stylesheet" href="/static/coverletter.css">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        function toggleTheme() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons();
+        }
+        function updateThemeIcons() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            document.querySelectorAll('.sun-icon').forEach(el => el.style.display = isLight ? 'none' : 'block');
+            document.querySelectorAll('.moon-icon').forEach(el => el.style.display = isLight ? 'block' : 'none');
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcons);
+    </script>
+</head>
+
+
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    {% include "partials/header.html" %}
+
+    <!-- Main Content -->
+    <main class="cl-container fade-in">
+        <!-- Hero -->
+        <div class="cl-hero">
+            <h1 class="cl-hero-title">
+                AI-Powered<br>
+                <span class="gradient-text">Cover Letter Generator</span>
+            </h1>
+            <p class="cl-hero-subtitle">
+                Paste your job description and let AI craft a professional, tailored cover letter using your resume data.
+            </p>
+        </div>
+
+        <!-- Input Card -->
+        <div class="cl-input-card">
+            <div class="cl-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                Job Details
+            </div>
+
+            <div class="cl-form-row">
+                <div class="cl-form-group">
+                    <label class="cl-label" for="companyName">Company Name</label>
+                    <input type="text" id="companyName" class="cl-input" placeholder="e.g. Google, Amazon, Microsoft">
+                </div>
+                <div class="cl-form-group">
+                    <label class="cl-label" for="roleTitle">Role Title</label>
+                    <input type="text" id="roleTitle" class="cl-input"
+                        placeholder="e.g. Frontend Engineer, Data Analyst">
+                </div>
+            </div>
+
+            <div class="cl-form-group full-width" style="margin-bottom: 18px;">
+                <label class="cl-label" for="jobDescription">Job Description <span
+                        style="color: var(--accent);">*</span></label>
+                <textarea id="jobDescription" class="cl-textarea" rows="6"
+                    placeholder="Paste the full job description here. The AI will align your cover letter to these requirements..."></textarea>
+            </div>
+
+            <div class="cl-form-group full-width" style="margin-bottom: 8px;">
+                <label class="cl-label" for="resumeText">Your Resume Text</label>
+                <textarea id="resumeText" class="cl-textarea" rows="5"
+                    placeholder="Paste your resume text here, or it will be auto-populated from your last analysis..."></textarea>
+                <div class="cl-resume-hint" id="resumeHint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    Auto-filled from your last resume analysis
+                </div>
+            </div>
+
+            <button type="button" class="cl-generate-btn" id="generateBtn">
+                <span class="cl-btn-text">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Generate Cover Letter
+                </span>
+                <span class="cl-btn-loading">
+                    <div class="cl-spinner"></div>
+                    Generating...
+                </span>
+            </button>
+        </div>
+
+        <!-- Output Card (hidden initially) -->
+        <div class="cl-output-card" id="outputCard" style="display: none;">
+            <div class="cl-output-header">
+                <div class="cl-output-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    Your Cover Letter
+                </div>
+                <div class="cl-output-actions">
+                    <button class="cl-action-btn copy-btn" id="copyBtn" title="Copy to Clipboard">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                        Copy
+                    </button>
+                    <button class="cl-action-btn pdf-btn" id="pdfBtn" title="Download as PDF">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Download PDF
+                    </button>
+                    <button class="cl-action-btn regen-btn" id="regenBtn" title="Regenerate">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Regenerate
+                    </button>
+                </div>
+            </div>
+            <div class="cl-editor" id="coverLetterEditor" contenteditable="true"></div>
+            <p class="cl-edit-hint">💡 Click on the text above to edit it directly before copying or downloading.</p>
+        </div>
+    </main>
+
+    <script src="/static/coverletter.js"></script>
+</body>
+
+</html>

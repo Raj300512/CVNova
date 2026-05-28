@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — AI Resume Intelligence Platform</title>
+    <meta name="description" content="Beat the ATS. Land more interviews. CVNova uses AI to optimize your resume, generate cover letters, and prep you for interviews.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <link rel="stylesheet" href="/static/landing.css">
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────── -->
+<nav class="nav">
+    <a href="/" class="nav-logo">
+        <img src="/static/logo.svg?v=2" alt="CVNova" width="36" height="36">
+        <span>CVNova</span>
+    </a>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#stats">Results</a>
+        <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+        <a href="/login" class="btn-ghost">Log in</a>
+        <a href="/register" class="btn-primary-sm">Get Started Free</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-orb orb-1"></div>
+        <div class="hero-orb orb-2"></div>
+        <div class="hero-grid"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            AI-Powered · Free to Start
+        </div>
+        <h1 class="hero-title">
+            Your Resume,<br>
+            <span class="gradient-text">Optimized by AI</span>
+        </h1>
+        <p class="hero-sub">
+            Upload your resume and get an instant ATS score, skill gap analysis, personalized cover letters, and mock interview prep — all in one place.
+        </p>
+        <div class="hero-actions">
+            <a href="/register" class="btn-primary-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Analyze My Resume Free
+            </a>
+            <a href="#how-it-works" class="btn-outline-lg">See how it works</a>
+        </div>
+        <p class="hero-note">No credit card required &nbsp;·&nbsp; Results in under 60 seconds</p>
+
+        <!-- Hero Card Preview -->
+        <div class="hero-card-wrap">
+            <div class="hero-card">
+                <div class="hc-header">
+                    <div class="hc-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span class="hc-title">Resume Analysis — Software Engineer</span>
+                </div>
+                <div class="hc-body">
+                    <div class="hc-score-row">
+                        <div class="hc-score">
+                            <svg class="hc-ring" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="url(#scoreGrad)" stroke-width="7"
+                                    stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="32"
+                                    transform="rotate(-90 40 40)"/>
+                                <defs>
+                                    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#7c4dff"/>
+                                        <stop offset="100%" stop-color="#00e5ff"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="hc-score-val">
+                                <span class="hc-num">85</span>
+                                <span class="hc-lbl">ATS Score</span>
+                            </div>
+                        </div>
+                        <div class="hc-pills">
+                            <div class="hc-pill green">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                React, Node.js, Python
+                            </div>
+                            <div class="hc-pill red">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                Docker, Kubernetes
+                            </div>
+                            <div class="hc-pill orange">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Add quantified metrics
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hc-bar-row">
+                        <div class="hc-bar-item">
+                            <span>Keywords</span>
+                            <div class="hc-bar"><div class="hc-bar-fill" style="width:88%;background:linear-gradient(90deg,#7c4dff,#b388ff)"></div></div>
+                            <span>88%</span>
+                        </div>
+                        <div class="hc-bar-item">
+                            <span>Formatting</span>
+                            <div class="hc-bar"><div class="hc-bar-fill" style="width:92%;background:linear-gradient(90deg,#00b0ff,#00e5ff)"></div></div>
+                            <span>92%</span>
+                        </div>
+                        <div class="hc-bar-item">
+                            <span>Impact</span>
+                            <div class="hc-bar"><div class="hc-bar-fill" style="width:74%;background:linear-gradient(90deg,#ff6d00,#ffa726)"></div></div>
+                            <span>74%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-card-glow"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ── SOCIAL PROOF BAR ─────────────────────────────────────────────────── -->
+<div class="proof-bar">
+    <div class="proof-inner">
+        <div class="proof-item">
+            <strong>12,000+</strong>
+            <span>Resumes Analyzed</span>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-item">
+            <strong>94%</strong>
+            <span>ATS Pass Rate</span>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-item">
+            <strong>30+</strong>
+            <span>Job Roles Supported</span>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-item">
+            <strong>&lt; 60s</strong>
+            <span>Analysis Time</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── FEATURES ─────────────────────────────────────────────────────────── -->
+<section class="features" id="features">
+    <div class="section-wrap">
+        <div class="section-label">FEATURES</div>
+        <h2 class="section-title">Everything you need to<br><span class="gradient-text">land your next job</span></h2>
+        <p class="section-sub">From resume analysis to mock interviews — CVNova covers every step of your job search.</p>
+
+        <div class="features-grid">
+
+            <div class="feat-card feat-large">
+                <div class="feat-icon-wrap purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <h3>AI Resume Analyzer</h3>
+                <p>Upload your resume and get an instant ATS compatibility score, keyword analysis, and actionable improvement suggestions tailored to your target role.</p>
+                <div class="feat-tags">
+                    <span>ATS Score</span><span>Keyword Match</span><span>Skill Gap</span>
+                </div>
+                <a href="/register" class="feat-link">Try it free →</a>
+            </div>
+
+            <div class="feat-card">
+                <div class="feat-icon-wrap blue">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <h3>Cover Letter Generator</h3>
+                <p>AI writes a tailored cover letter aligned to the job description in seconds.</p>
+                <a href="/register" class="feat-link">Generate now →</a>
+            </div>
+
+            <div class="feat-card">
+                <div class="feat-icon-wrap green">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </div>
+                <h3>Mock Interview Prep</h3>
+                <p>Practice technical and behavioral questions with AI feedback based on your resume.</p>
+                <a href="/register" class="feat-link">Start practicing →</a>
+            </div>
+
+            <div class="feat-card">
+                <div class="feat-icon-wrap pink">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <h3>Live Job Search</h3>
+                <p>Search real jobs from LinkedIn, Indeed, Glassdoor and more — all in one place.</p>
+                <a href="/register" class="feat-link">Find jobs →</a>
+            </div>
+
+            <div class="feat-card feat-large">
+                <div class="feat-icon-wrap cyan">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3>Bunny AI Chat Assistant</h3>
+                <p>Chat with Bunny 🐰 — your personal AI resume coach. Ask anything about your resume, get specific bullet point rewrites, and get career advice tailored to your actual data.</p>
+                <div class="feat-chat-preview">
+                    <div class="chat-bubble user">How can I improve my ATS score?</div>
+                    <div class="chat-bubble ai">
+                        <span class="chat-ai-name">Bunny 🐰</span>
+                        Your score is 85/100. Adding Docker and Kubernetes to your skills section could push it to 94+!
+                    </div>
+                </div>
+                <a href="/register" class="feat-link">Chat with Bunny →</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────────────────────────────── -->
+<section class="how-it-works" id="how-it-works">
+    <div class="section-wrap">
+        <div class="section-label">THE PROCESS</div>
+        <h2 class="section-title">From resume to<br><span class="gradient-text">interview in 4 steps</span></h2>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">01</div>
+                <div class="step-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <h3>Upload Resume</h3>
+                <p>Drop your PDF or DOCX resume. Paste the job description for deeper keyword matching.</p>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-num">02</div>
+                <div class="step-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <h3>AI Analysis</h3>
+                <p>Our AI scans for ATS compatibility, keyword gaps, formatting issues, and skill mismatches.</p>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-num">03</div>
+                <div class="step-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <h3>Get Insights</h3>
+                <p>Receive your ATS score, missing skills roadmap, improvement suggestions, and interview questions.</p>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-num">04</div>
+                <div class="step-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h3>Apply with Confidence</h3>
+                <p>Download your analysis PDF, generate a cover letter, and track your applications — all in one dashboard.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── STATS ─────────────────────────────────────────────────────────────── -->
+<section class="stats-section" id="stats">
+    <div class="section-wrap">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-num gradient-text">85%</div>
+                <div class="stat-label">of resumes fail ATS screening before a human sees them</div>
+            </div>
+            <div class="stat-card stat-highlight">
+                <div class="stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <h3>CVNova fixes that</h3>
+                <p>Our AI ensures your resume speaks the language ATS systems understand — so you get seen by real humans.</p>
+                <a href="/register" class="btn-primary-sm" style="margin-top:16px;display:inline-flex;">Start for free →</a>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num gradient-text">3x</div>
+                <div class="stat-label">more interview callbacks reported by users after optimizing with CVNova</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────────────── -->
+<section class="faq-section" id="faq">
+    <div class="section-wrap">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Got questions?<br><span class="gradient-text">We've got answers</span></h2>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    How does the ATS score work?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">Our AI analyzes your resume against industry-standard ATS criteria — keyword density, formatting, section structure, and role-specific skill matching. You get a score out of 100 with a detailed breakdown.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Is my resume data safe?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">Yes. Your resume is processed in memory and deleted immediately after analysis. We never store your resume file on our servers. Only your analysis results are saved to your account.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Which job roles are supported?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">CVNova supports 30+ roles including Software Engineer, Data Scientist, Product Manager, UI/UX Designer, DevOps, Marketing, Finance, and more. You can also enter any custom role.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    Do I need to pay to use CVNova?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">CVNova is completely free to use. Create an account and start analyzing your resume right away — no credit card required.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">
+                    What file formats are supported?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-a">We support PDF and DOCX files up to 10MB. For best results, use a text-based PDF (not a scanned image). DOCX files from Microsoft Word or Google Docs work perfectly.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FINAL CTA ─────────────────────────────────────────────────────────── -->
+<section class="final-cta">
+    <div class="cta-orb cta-orb-1"></div>
+    <div class="cta-orb cta-orb-2"></div>
+    <div class="section-wrap" style="position:relative;z-index:1;">
+        <h2 class="cta-title">Ready to beat the ATS?</h2>
+        <p class="cta-sub">Join thousands of job seekers who've optimized their resumes with CVNova.</p>
+        <a href="/register" class="btn-primary-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Get Started — It's Free
+        </a>
+        <p class="hero-note" style="margin-top:16px;">Already have an account? <a href="/login" style="color:var(--accent-light);text-decoration:none;">Log in →</a></p>
+    </div>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────────────────────────────── -->
+<section class="section" id="testimonials" style="padding: 80px 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Loved by Job Seekers</h2>
+            <p class="section-subtitle">Real reviews from real users. No fake testimonials here!</p>
+        </div>
+
+        <!-- Reviews Grid -->
+        <div id="reviewsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:48px;min-height:100px;">
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.4);">
+                <div style="font-size:2rem;margin-bottom:8px;">⏳</div>
+                <p>Loading reviews...</p>
+            </div>
+        </div>
+
+        <!-- Average Rating Bar -->
+        <div id="ratingBar" style="display:none;text-align:center;margin-top:32px;">
+            <div style="font-size:2.5rem;font-weight:900;color:#ffa726;" id="avgRating">—</div>
+            <div style="display:flex;justify-content:center;gap:4px;margin:8px 0;" id="avgStars"></div>
+            <div style="color:rgba(255,255,255,0.5);font-size:0.9rem;" id="totalReviews"></div>
+        </div>
+
+        <!-- Write Review CTA -->
+        <div style="text-align:center;margin-top:40px;">
+            <button onclick="openFeedbackModal()" style="padding:14px 32px;background:linear-gradient(135deg,#7c4dff,#b388ff);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(124,77,255,0.4);"
+                onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+                ✍️ Write a Review
+            </button>
+            <p style="margin-top:12px;font-size:0.85rem;color:rgba(255,255,255,0.4);">Login required to submit a review</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── FEEDBACK MODAL ────────────────────────────────────────────────────── -->
+<div id="feedbackModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#12121a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;width:100%;max-width:480px;position:relative;animation:dropIn 0.2s ease;">
+        <button onclick="closeFeedbackModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.5rem;cursor:pointer;line-height:1;">&times;</button>
+
+        <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:6px;">Share Your Experience ✨</h2>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-bottom:28px;">Help others by sharing how CVNova helped you!</p>
+
+        <!-- Star Rating -->
+        <div style="margin-bottom:24px;">
+            <label style="display:block;font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.6);margin-bottom:10px;">Your Rating *</label>
+            <div id="starPicker" style="display:flex;gap:8px;">
+                <span class="star-pick" data-val="1" style="font-size:2rem;cursor:pointer;transition:transform 0.1s;opacity:0.4;">★</span>
+                <span class="star-pick" data-val="2" style="font-size:2rem;cursor:pointer;transition:transform 0.1s;opacity:0.4;">★</span>
+                <span class="star-pick" data-val="3" style="font-size:2rem;cursor:pointer;transition:transform 0.1s;opacity:0.4;">★</span>
+                <span class="star-pick" data-val="4" style="font-size:2rem;cursor:pointer;transition:transform 0.1s;opacity:0.4;">★</span>
+                <span class="star-pick" data-val="5" style="font-size:2rem;cursor:pointer;transition:transform 0.1s;opacity:0.4;">★</span>
+            </div>
+        </div>
+
+        <!-- Job Title -->
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.6);margin-bottom:8px;">Your Role (optional)</label>
+            <input type="text" id="fbJobTitle" placeholder="e.g. Software Engineer @ Google"
+                style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.9rem;outline:none;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        </div>
+
+        <!-- Review Text -->
+        <div style="margin-bottom:24px;">
+            <label style="display:block;font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.6);margin-bottom:8px;">Your Review * <span id="charCount" style="color:rgba(255,255,255,0.3);font-weight:400;">(0/500)</span></label>
+            <textarea id="fbReview" rows="4" placeholder="How did CVNova help you? What features did you love?"
+                style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.9rem;outline:none;resize:vertical;font-family:inherit;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+                oninput="document.getElementById('charCount').textContent='('+this.value.length+'/500)'"></textarea>
+        </div>
+
+        <button onclick="submitFeedback()" id="fbSubmitBtn"
+            style="width:100%;padding:14px;background:linear-gradient(135deg,#7c4dff,#b388ff);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+            Submit Review
+        </button>
+        <div id="fbError" style="display:none;margin-top:12px;color:#ff5252;font-size:0.85rem;text-align:center;"></div>
+    </div>
+</div>
+
+<style>
+.star-pick { color: #ffa726; }
+.star-pick.active { opacity: 1 !important; transform: scale(1.2); }
+.star-pick:hover { opacity: 1 !important; transform: scale(1.15); }
+@keyframes dropIn {
+    from { opacity:0; transform:translateY(-20px) scale(0.95); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+}
+</style>
+
+<script>
+let selectedRating = 0;
+
+// ── Load Reviews ──────────────────────────────────────────────────────────
+async function loadReviews() {
+    try {
+        const resp = await fetch('/api/feedback');
+        const reviews = await resp.json();
+        const grid = document.getElementById('reviewsGrid');
+        const ratingBar = document.getElementById('ratingBar');
+
+        if (!reviews.length) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;padding:60px 20px;">
+                    <div style="font-size:3rem;margin-bottom:16px;">💬</div>
+                    <h3 style="font-size:1.2rem;margin-bottom:8px;color:rgba(255,255,255,0.8);">No reviews yet</h3>
+                    <p style="color:rgba(255,255,255,0.4);">Be the first to share your experience!</p>
+                </div>`;
+            return;
+        }
+
+        // Avg rating
+        const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+        document.getElementById('avgRating').textContent = avg;
+        document.getElementById('avgStars').innerHTML = [1,2,3,4,5].map(i =>
+            `<span style="font-size:1.4rem;color:${i <= Math.round(avg) ? '#ffa726' : 'rgba(255,255,255,0.2)'};">★</span>`
+        ).join('');
+        document.getElementById('totalReviews').textContent = `Based on ${reviews.length} review${reviews.length > 1 ? 's' : ''}`;
+        ratingBar.style.display = 'block';
+
+        // Color per rating
+        const colors = {
+            5: {bg:'rgba(0,230,118,0.06)',border:'rgba(0,230,118,0.2)'},
+            4: {bg:'rgba(124,77,255,0.06)',border:'rgba(124,77,255,0.2)'},
+            3: {bg:'rgba(41,182,246,0.06)',border:'rgba(41,182,246,0.2)'},
+            2: {bg:'rgba(255,167,38,0.06)',border:'rgba(255,167,38,0.2)'},
+            1: {bg:'rgba(255,82,82,0.06)',border:'rgba(255,82,82,0.2)'},
+        };
+
+        grid.innerHTML = reviews.map(r => {
+            const c = colors[r.rating] || colors[5];
+            const initials = r.user_name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+            const gradients = ['135deg,#7c4dff,#b388ff','135deg,#00e676,#00bcd4','135deg,#29b6f6,#536dfe','135deg,#ffa726,#ff6f00','135deg,#ef5350,#e91e63'];
+            const grad = gradients[r.id % gradients.length];
+            const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+            const date = new Date(r.created_at).toLocaleDateString('en-US', {month:'short', year:'numeric'});
+            return `
+            <div style="padding:24px;border-radius:16px;background:${c.bg};border:1px solid ${c.border};transition:transform 0.2s,box-shadow 0.2s;"
+                onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.3)'"
+                onmouseout="this.style.transform='';this.style.boxShadow=''">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                    <span style="color:#ffa726;font-size:1.1rem;letter-spacing:2px;">${stars}</span>
+                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.3);">${date}</span>
+                </div>
+                <p style="font-size:0.92rem;line-height:1.7;color:rgba(255,255,255,0.75);margin-bottom:18px;">"${escapeHtml(r.review)}"</p>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:linear-gradient(${grad});border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.85rem;flex-shrink:0;">${initials}</div>
+                    <div>
+                        <div style="font-weight:600;font-size:0.88rem;">${escapeHtml(r.user_name)}</div>
+                        ${r.job_title ? `<div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">${escapeHtml(r.job_title)}</div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        document.getElementById('reviewsGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.3);padding:40px;">Could not load reviews.</div>';
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openFeedbackModal() {
+    // Check if logged in
+    fetch('/api/feedback/mine').then(r => {
+        if (r.status === 401) {
+            window.location.href = '/login?next=/landing%3Freview%3D1';
+            return null;
+        }
+        return r.json();
+    }).then(existing => {
+        if (existing === null) return;
+        if (existing && existing.id) {
+            selectedRating = existing.rating;
+            document.getElementById('fbReview').value = existing.review;
+            document.getElementById('fbJobTitle').value = existing.job_title || '';
+            document.getElementById('charCount').textContent = `(${existing.review.length}/500)`;
+            updateStars(existing.rating);
+        }
+        document.getElementById('feedbackModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }).catch(() => {
+        window.location.href = '/login?next=/landing%3Freview%3D1';
+    });
+}
+
+function closeFeedbackModal() {
+    document.getElementById('feedbackModal').style.display = 'none';
+    document.body.style.overflow = '';
+    selectedRating = 0;
+    document.getElementById('fbReview').value = '';
+    document.getElementById('fbJobTitle').value = '';
+    document.getElementById('fbError').style.display = 'none';
+    updateStars(0);
+}
+
+function updateStars(val) {
+    document.querySelectorAll('.star-pick').forEach(s => {
+        const v = parseInt(s.dataset.val);
+        s.classList.toggle('active', v <= val);
+    });
+}
+
+// Star picker events
+document.querySelectorAll('.star-pick').forEach(s => {
+    s.addEventListener('click', () => {
+        selectedRating = parseInt(s.dataset.val);
+        updateStars(selectedRating);
+    });
+    s.addEventListener('mouseover', () => updateStars(parseInt(s.dataset.val)));
+    s.addEventListener('mouseout', () => updateStars(selectedRating));
+});
+
+// Close on backdrop click
+document.getElementById('feedbackModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('feedbackModal')) closeFeedbackModal();
+});
+
+async function submitFeedback() {
+    const review = document.getElementById('fbReview').value.trim();
+    const jobTitle = document.getElementById('fbJobTitle').value.trim();
+    const errEl = document.getElementById('fbError');
+    const btn = document.getElementById('fbSubmitBtn');
+
+    errEl.style.display = 'none';
+
+    if (!selectedRating) { errEl.textContent = 'Please select a star rating!'; errEl.style.display = 'block'; return; }
+    if (!review || review.length < 10) { errEl.textContent = 'Review must be at least 10 characters.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    try {
+        const resp = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ rating: selectedRating, review, job_title: jobTitle })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Failed');
+
+        closeFeedbackModal();
+        loadReviews();
+
+        // Success toast
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(0,230,118,0.4);color:#00e676;padding:14px 28px;border-radius:12px;font-size:0.95rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+        toast.textContent = '🎉 Thank you for your review!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    } catch(e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    }
+
+    btn.textContent = 'Submit Review';
+    btn.disabled = false;
+}
+
+// Load on page load
+loadReviews();
+
+// Auto-open modal if redirected back from login
+if (new URLSearchParams(window.location.search).get('review') === '1') {
+    setTimeout(() => openFeedbackModal(), 500);
+}
+</script>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <img src="/static/logo.svg" alt="CVNova" width="28" height="28">
+            <span>CVNova</span>
+        </div>
+        <div class="footer-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#faq">FAQ</a>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+        <p class="footer-copy">© 2026 CVNova. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+
+// Mobile nav
+document.getElementById('hamburger').addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('open');
+    document.querySelector('.nav-cta').classList.toggle('open');
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.feat-card, .step-card, .stat-card, .faq-item').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

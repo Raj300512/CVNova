@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — Resume Comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <style>
+        .cmp-container { max-width: 1100px; margin: 0 auto; padding: 100px 24px 60px; }
+        .cmp-hero { text-align: center; margin-bottom: 40px; }
+        .cmp-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .cmp-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+        .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .cmp-label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+        .cmp-textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; line-height: 1.6; resize: vertical; min-height: 160px; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+        .cmp-textarea:focus { border-color: #bb86fc; }
+        .cmp-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box; }
+        .cmp-btn { padding: 14px 28px; background: linear-gradient(135deg, #7c4dff, #bb86fc); border: none; border-radius: 10px; color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .cmp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,77,255,0.4); }
+        .cmp-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .cmp-btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-primary); }
+        .cmp-btn-secondary:hover { background: rgba(255,255,255,0.1); box-shadow: none; }
+        .score-badge { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; font-size: 1.4rem; font-weight: 900; }
+        .score-a { background: rgba(124,77,255,0.2); color: #bb86fc; border: 2px solid rgba(124,77,255,0.4); }
+        .score-b { background: rgba(0,230,118,0.2); color: #00e676; border: 2px solid rgba(0,230,118,0.4); }
+        .winner-banner { background: linear-gradient(135deg, rgba(0,230,118,0.15), rgba(0,230,118,0.05)); border: 1px solid rgba(0,230,118,0.3); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px; }
+        .skill-chip { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; font-weight: 500; margin: 3px; }
+        .chip-gained { background: rgba(0,230,118,0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+        .chip-lost { background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid rgba(255,82,82,0.3); }
+        .chip-common { background: rgba(187,134,252,0.15); color: #bb86fc; border: 1px solid rgba(187,134,252,0.3); }
+        .versions-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+        .version-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .version-card:hover { border-color: #bb86fc; background: rgba(124,77,255,0.08); }
+        .version-card.selected-a { border-color: #bb86fc; background: rgba(124,77,255,0.12); }
+        .version-card.selected-b { border-color: #00e676; background: rgba(0,230,118,0.08); }
+        .version-score { font-size: 1.5rem; font-weight: 900; color: #bb86fc; }
+        .version-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+        .version-role { font-size: 0.8rem; color: var(--text-secondary); }
+        .version-date { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 6px; }
+        .del-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: rgba(255,82,82,0.5); cursor: pointer; padding: 4px; border-radius: 4px; }
+        .del-btn:hover { color: #ff5252; background: rgba(255,82,82,0.1); }
+        .spinner-sm { width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #compareResult { display: none; }
+        #savedVersionsSection { display: none; }
+        .tab-btns { display: flex; gap: 8px; margin-bottom: 24px; }
+        .tab-btn-cmp { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .tab-btn-cmp.active { background: rgba(124,77,255,0.15); border-color: #bb86fc; color: #bb86fc; }
+        .tab-pane-cmp { display: none; }
+        .tab-pane-cmp.active { display: block; }
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+{% include 'partials/header.html' %}
+
+<main class="cmp-container fade-in">
+    <div class="cmp-hero">
+        <h1>📊 Resume <span class="gradient-text">Comparison</span></h1>
+        <p style="color:var(--text-secondary)">Compare two resume versions side-by-side to see which performs better.</p>
+    </div>
+
+    <div class="tab-btns">
+        <button class="tab-btn-cmp active" onclick="switchTab('new')">Compare New Versions</button>
+        <button class="tab-btn-cmp" onclick="switchTab('saved')">My Saved Versions</button>
+    </div>
+
+    <!-- Tab: New Comparison -->
+    <div class="tab-pane-cmp active" id="tab-new">
+        <div class="cmp-card">
+            <div class="cmp-grid">
+                <div>
+                    <label class="cmp-label">Version A — Name</label>
+                    <input type="text" id="nameA" class="cmp-input" placeholder="e.g. Original Resume" style="margin-bottom:12px;">
+                    <label class="cmp-label">Resume Text A</label>
+                    <textarea id="textA" class="cmp-textarea" placeholder="Paste your first resume version here..."></textarea>
+                </div>
+                <div>
+                    <label class="cmp-label">Version B — Name</label>
+                    <input type="text" id="nameB" class="cmp-input" placeholder="e.g. Updated Resume" style="margin-bottom:12px;">
+                    <label class="cmp-label">Resume Text B</label>
+                    <textarea id="textB" class="cmp-textarea" placeholder="Paste your second resume version here..."></textarea>
+                </div>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <div style="flex:1;min-width:200px;">
+                    <label class="cmp-label">Target Role</label>
+                    <select id="cmpRole" class="cmp-input">
+                        {% for role in roles %}
+                        <option value="{{ role.id }}">{{ role.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button class="cmp-btn" id="compareBtn">
+                        <span id="compareBtnText" style="display:flex;align-items:center;gap:8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            Compare Now
+                        </span>
+                        <span id="compareBtnLoading" style="display:none;align-items:center;gap:8px;"><div class="spinner-sm"></div> Analyzing...</span>
+                    </button>
+                    <button class="cmp-btn cmp-btn-secondary" id="saveVersionsBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Save Both
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Result -->
+        <div id="compareResult">
+            <div class="winner-banner" id="winnerBanner"></div>
+            <div class="cmp-grid">
+                <div class="cmp-card" style="text-align:center;">
+                    <p style="color:var(--text-secondary);margin-bottom:8px;font-size:0.85rem;">VERSION A</p>
+                    <div class="score-badge score-a" id="scoreA">0</div>
+                    <p style="margin-top:8px;font-weight:600;" id="nameADisplay">Version A</p>
+                </div>
+                <div class="cmp-card" style="text-align:center;">
+                    <p style="color:var(--text-secondary);margin-bottom:8px;font-size:0.85rem;">VERSION B</p>
+                    <div class="score-badge score-b" id="scoreB">0</div>
+                    <p style="margin-top:8px;font-weight:600;" id="nameBDisplay">Version B</p>
+                </div>
+            </div>
+            <div class="cmp-grid">
+                <div class="cmp-card">
+                    <h3 style="color:#00e676;margin-bottom:12px;">✅ Skills Gained in B</h3>
+                    <div id="skillsGained"></div>
+                </div>
+                <div class="cmp-card">
+                    <h3 style="color:#ff5252;margin-bottom:12px;">❌ Skills Lost from A</h3>
+                    <div id="skillsLost"></div>
+                </div>
+            </div>
+            <div class="cmp-card">
+                <h3 style="color:#bb86fc;margin-bottom:12px;">🔗 Common Skills</h3>
+                <div id="skillsCommon"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Saved Versions -->
+    <div class="tab-pane-cmp" id="tab-saved">
+        <div class="cmp-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3>My Saved Resume Versions</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">Click two versions to compare them</p>
+            </div>
+            <div class="versions-list" id="versionsList">
+                <p style="color:var(--text-secondary);">Loading...</p>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:12px;">
+                <button class="cmp-btn" id="compareSavedBtn" disabled>
+                    Compare Selected
+                </button>
+                <p style="color:var(--text-secondary);font-size:0.85rem;align-self:center;" id="selectionHint">Select 2 versions to compare</p>
+            </div>
+        </div>
+        <div id="savedCompareResult"></div>
+    </div>
+</main>
+
+<script>
+let selectedVersions = [];
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn-cmp').forEach((b, i) => b.classList.toggle('active', (tab === 'new' && i === 0) || (tab === 'saved' && i === 1)));
+    document.getElementById('tab-new').classList.toggle('active', tab === 'new');
+    document.getElementById('tab-saved').classList.toggle('active', tab === 'saved');
+    if (tab === 'saved') loadSavedVersions();
+}
+
+// ─── New Comparison ───────────────────────────────────────────────────────
+document.getElementById('compareBtn').addEventListener('click', async () => {
+    const textA = document.getElementById('textA').value.trim();
+    const textB = document.getElementById('textB').value.trim();
+    const role = document.getElementById('cmpRole').value.trim() || 'software_engineer';
+    if (!textA || !textB) { alert('Please paste both resume versions.'); return; }
+
+    document.getElementById('compareBtnText').style.display = 'none';
+    document.getElementById('compareBtnLoading').style.display = 'flex';
+    document.getElementById('compareBtn').disabled = true;
+
+    try {
+        // Analyze both in parallel
+        const [resA, resB] = await Promise.all([
+            fetch('/api/analyze-live', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({text: textA, job_role: role}) }).then(r => r.json()),
+            fetch('/api/analyze-live', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({text: textB, job_role: role}) }).then(r => r.json())
+        ]);
+
+        const scoreA = resA.ats_score?.total || 0;
+        const scoreB = resB.ats_score?.total || 0;
+        const skillsA = new Set(resA.found_skills || []);
+        const skillsB = new Set(resB.found_skills || []);
+        const gained = [...skillsB].filter(s => !skillsA.has(s));
+        const lost = [...skillsA].filter(s => !skillsB.has(s));
+        const common = [...skillsA].filter(s => skillsB.has(s));
+
+        document.getElementById('scoreA').textContent = scoreA;
+        document.getElementById('scoreB').textContent = scoreB;
+        document.getElementById('nameADisplay').textContent = document.getElementById('nameA').value || 'Version A';
+        document.getElementById('nameBDisplay').textContent = document.getElementById('nameB').value || 'Version B';
+
+        const diff = scoreB - scoreA;
+        const winner = diff > 0 ? 'B' : (diff < 0 ? 'A' : 'Tie');
+        document.getElementById('winnerBanner').innerHTML = winner === 'Tie'
+            ? `<h3>🤝 It's a Tie!</h3><p style="color:var(--text-secondary)">Both versions score equally.</p>`
+            : `<h3>🏆 Version ${winner} Wins!</h3><p style="color:var(--text-secondary)">Score difference: <strong style="color:${diff > 0 ? '#00e676' : '#ff5252'}">${diff > 0 ? '+' : ''}${diff} points</strong></p>`;
+
+        document.getElementById('skillsGained').innerHTML = gained.length ? gained.map(s => `<span class="skill-chip chip-gained">${s}</span>`).join('') : '<p style="color:var(--text-secondary);font-size:0.85rem;">No new skills added</p>';
+        document.getElementById('skillsLost').innerHTML = lost.length ? lost.map(s => `<span class="skill-chip chip-lost">${s}</span>`).join('') : '<p style="color:var(--text-secondary);font-size:0.85rem;">No skills removed</p>';
+        document.getElementById('skillsCommon').innerHTML = common.slice(0, 20).map(s => `<span class="skill-chip chip-common">${s}</span>`).join('');
+
+        document.getElementById('compareResult').style.display = 'block';
+        document.getElementById('compareResult').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        alert('Error: ' + e.message);
+    } finally {
+        document.getElementById('compareBtnText').style.display = 'flex';
+        document.getElementById('compareBtnLoading').style.display = 'none';
+        document.getElementById('compareBtn').disabled = false;
+    }
+});
+
+document.getElementById('saveVersionsBtn').addEventListener('click', async () => {
+    const textA = document.getElementById('textA').value.trim();
+    const textB = document.getElementById('textB').value.trim();
+    const role = document.getElementById('cmpRole').value.trim() || 'software_engineer';
+    const nameA = document.getElementById('nameA').value || 'Version A';
+    const nameB = document.getElementById('nameB').value || 'Version B';
+    if (!textA || !textB) { alert('Please paste both resume versions first.'); return; }
+
+    try {
+        await Promise.all([
+            fetch('/api/resume-versions', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({resume_text: textA, job_role: role, name: nameA}) }),
+            fetch('/api/resume-versions', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({resume_text: textB, job_role: role, name: nameB}) })
+        ]);
+        alert('Both versions saved! Switch to "My Saved Versions" tab to compare them later.');
+    } catch (e) {
+        alert('Error saving: ' + e.message);
+    }
+});
+
+// ─── Saved Versions ───────────────────────────────────────────────────────
+async function loadSavedVersions() {
+    const resp = await fetch('/api/resume-versions');
+    const versions = await resp.json();
+    const list = document.getElementById('versionsList');
+    if (!versions.length) {
+        list.innerHTML = '<p style="color:var(--text-secondary);">No saved versions yet. Compare and save versions from the first tab.</p>';
+        return;
+    }
+    list.innerHTML = versions.map(v => `
+        <div class="version-card" id="vc-${v.id}" onclick="selectVersion(${v.id})">
+            <button class="del-btn" onclick="event.stopPropagation();deleteVersion(${v.id})" title="Delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+            <div class="version-score">${v.ats_score}</div>
+            <div class="version-name">${v.name}</div>
+            <div class="version-role">${v.role}</div>
+            <div class="version-date">${new Date(v.created_at).toLocaleDateString()}</div>
+        </div>
+    `).join('');
+}
+
+function selectVersion(id) {
+    if (selectedVersions.includes(id)) {
+        selectedVersions = selectedVersions.filter(v => v !== id);
+        document.getElementById(`vc-${id}`).classList.remove('selected-a', 'selected-b');
+    } else if (selectedVersions.length < 2) {
+        selectedVersions.push(id);
+        document.getElementById(`vc-${id}`).classList.add(selectedVersions.length === 1 ? 'selected-a' : 'selected-b');
+    }
+    document.getElementById('compareSavedBtn').disabled = selectedVersions.length !== 2;
+    document.getElementById('selectionHint').textContent = selectedVersions.length === 0 ? 'Select 2 versions to compare' : selectedVersions.length === 1 ? 'Select 1 more version' : 'Ready to compare!';
+}
+
+document.getElementById('compareSavedBtn').addEventListener('click', async () => {
+    if (selectedVersions.length !== 2) return;
+    const resp = await fetch('/api/compare-versions', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({version_a_id: selectedVersions[0], version_b_id: selectedVersions[1]}) });
+    const data = await resp.json();
+    const diff = data.score_diff;
+    document.getElementById('savedCompareResult').innerHTML = `
+        <div class="winner-banner" style="background:linear-gradient(135deg,rgba(0,230,118,0.15),rgba(0,230,118,0.05));border:1px solid rgba(0,230,118,0.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
+            <h3>🏆 ${data.winner === 'Tie' ? "It's a Tie!" : `Version ${data.winner} Wins!`}</h3>
+            <p style="color:var(--text-secondary)">Score difference: <strong style="color:${diff >= 0 ? '#00e676' : '#ff5252'}">${diff >= 0 ? '+' : ''}${diff} points</strong></p>
+        </div>
+        <div class="cmp-grid">
+            <div class="cmp-card" style="text-align:center;"><p style="color:var(--text-secondary);font-size:0.85rem;">VERSION A</p><div class="score-badge score-a">${data.version_a.ats_score}</div><p style="margin-top:8px;font-weight:600;">${data.version_a.name}</p></div>
+            <div class="cmp-card" style="text-align:center;"><p style="color:var(--text-secondary);font-size:0.85rem;">VERSION B</p><div class="score-badge score-b">${data.version_b.ats_score}</div><p style="margin-top:8px;font-weight:600;">${data.version_b.name}</p></div>
+        </div>
+        <div class="cmp-grid">
+            <div class="cmp-card"><h3 style="color:#00e676;margin-bottom:12px;">✅ Skills Gained in B</h3>${data.skills_gained.length ? data.skills_gained.map(s => `<span class="skill-chip chip-gained">${s}</span>`).join('') : '<p style="color:var(--text-secondary);font-size:0.85rem;">None</p>'}</div>
+            <div class="cmp-card"><h3 style="color:#ff5252;margin-bottom:12px;">❌ Skills Lost from A</h3>${data.skills_lost.length ? data.skills_lost.map(s => `<span class="skill-chip chip-lost">${s}</span>`).join('') : '<p style="color:var(--text-secondary);font-size:0.85rem;">None</p>'}</div>
+        </div>
+    `;
+    document.getElementById('savedCompareResult').scrollIntoView({ behavior: 'smooth' });
+});
+
+async function deleteVersion(id) {
+    if (!confirm('Delete this version?')) return;
+    await fetch(`/api/resume-versions/${id}`, { method: 'DELETE' });
+    selectedVersions = selectedVersions.filter(v => v !== id);
+    loadSavedVersions();
+}
+</script>
+</body>
+</html>

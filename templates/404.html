@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found | CVNova</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',sans-serif;background:#07070f;color:#e8e8ef;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        .bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:80px 80px;pointer-events:none;}
+        .orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;}
+        .orb-1{width:500px;height:500px;background:rgba(124,77,255,0.1);top:-100px;right:-100px;}
+        .orb-2{width:400px;height:400px;background:rgba(0,229,255,0.06);bottom:-100px;left:-100px;}
+        .wrap{position:relative;z-index:1;text-align:center;padding:40px 24px;}
+        .num{font-family:'Outfit',sans-serif;font-size:clamp(6rem,20vw,12rem);font-weight:900;line-height:1;background:linear-gradient(135deg,#b388ff,#7c4dff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+        h1{font-family:'Outfit',sans-serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:700;margin-bottom:12px;}
+        p{color:#8e8ea0;font-size:1rem;max-width:400px;margin:0 auto 36px;line-height:1.7;}
+        .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+        .btn-home{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:linear-gradient(135deg,#7c4dff,#536dfe);color:#fff;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;transition:all 0.2s;}
+        .btn-home:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,77,255,0.4);}
+        .btn-back{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:0.95rem;font-weight:500;color:#8e8ea0;text-decoration:none;transition:all 0.2s;background:rgba(255,255,255,0.03);}
+        .btn-back:hover{border-color:rgba(124,77,255,0.4);color:#e8e8ef;}
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="wrap">
+        <div class="num">404</div>
+        <h1>Page not found</h1>
+        <p>The page you're looking for doesn't exist or has been moved.</p>
+        <div class="btns">
+            <a href="/" class="btn-home">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Go Home
+            </a>
+            <a href="javascript:history.back()" class="btn-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Go Back
+            </a>
+        </div>
+    </div>
+</body>
+</html>

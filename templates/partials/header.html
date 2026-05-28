@@ -1,0 +1,551 @@
+<!-- Shared Header Partial — include in all pages -->
+<header class="header">
+    <a href="/" class="logo" style="text-decoration:none;" title="Back to Home">
+        <div class="logo-icon">
+            <img src="/static/logo.svg" alt="CVNova Logo" width="40" height="40">
+        </div>
+        <span class="logo-text">CVNova</span>
+    </a>
+
+    <div class="header-user">
+
+        <!-- ── Desktop Nav Links ── -->
+        <nav class="header-nav" id="headerNav">
+            <a href="/jobs" class="btn-nav header-nav-btn" style="background:rgba(187,134,252,0.1);color:#bb86fc;border-color:rgba(187,134,252,0.3);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Jobs
+            </a>
+            <a href="/coverletter" class="btn-nav header-nav-btn" style="background:rgba(255,167,38,0.1);color:#ffa726;border-color:rgba(255,167,38,0.3);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                Cover Letter
+            </a>
+            <a href="/interview" class="btn-nav header-nav-btn" style="background:rgba(239,83,80,0.1);color:#ef5350;border-color:rgba(239,83,80,0.3);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                Interview
+            </a>
+            <a href="/salary" class="btn-nav header-nav-btn" style="background:rgba(0,230,118,0.1);color:#00e676;border-color:rgba(0,230,118,0.3);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Salary
+            </a>
+        </nav>
+
+        <!-- ── Icon Buttons (Notif + Theme) ── -->
+        <div class="header-icons">
+            <!-- Notification Bell -->
+            <div style="position:relative;display:inline-flex;align-items:center;">
+                <button class="icon-btn" id="notifBellBtn" aria-label="Notifications">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notif-badge" id="notifBadge" style="display:none;position:absolute;top:2px;right:2px;background:#ef5350;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;align-items:center;justify-content:center;line-height:1;">0</span>
+                </button>
+                <div class="notif-dropdown" id="notifDropdown" style="display:none;position:absolute;top:44px;right:0;width:320px;background:var(--bg-secondary,#12121a);border:1px solid rgba(255,255,255,0.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:1000;overflow:hidden;">
+                    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:600;font-size:0.95rem;">Notifications</span>
+                        <button onclick="markAllRead()" style="background:none;border:none;color:#bb86fc;cursor:pointer;font-size:0.8rem;">Mark all read</button>
+                    </div>
+                    <div id="notifList" style="max-height:320px;overflow-y:auto;"></div>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button id="themeToggle" class="icon-btn" aria-label="Toggle theme" onclick="toggleTheme()">
+                <svg class="sun-icon" style="display:block;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="moon-icon" style="display:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+
+        <!-- ── User + Hamburger ── -->
+        <div class="header-right">
+            <!-- User Avatar Dropdown -->
+            <div class="user-menu-wrap" id="userMenuWrap">
+                <button class="user-menu-btn" id="userMenuBtn">
+                    <div class="user-avatar">{{ current_user.name[0]|upper }}</div>
+                    <span class="user-name-text">{{ current_user.name.split()[0] }}</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <!-- User Dropdown -->
+                <div class="user-dropdown" id="userDropdown" style="display:none;">
+                    <div class="user-dropdown-header">
+                        <div class="user-avatar-lg">{{ current_user.name[0]|upper }}</div>
+                        <div>
+                            <div style="font-weight:600;font-size:0.9rem;">{{ current_user.name }}</div>
+                            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">{{ current_user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-divider"></div>
+                    <a href="/profile" class="user-dropdown-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bb86fc" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        My Profile
+                    </a>
+                    <div class="user-dropdown-divider"></div>
+                    <!-- Mobile Nav Links (hidden on desktop) -->
+                    <div class="mobile-nav-links">
+                        <a href="/jobs" class="user-dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bb86fc" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            Find Jobs
+                        </a>
+                        <a href="/coverletter" class="user-dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffa726" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            Cover Letter
+                        </a>
+                        <a href="/interview" class="user-dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path></svg>
+                            Mock Interview
+                        </a>
+                        <a href="/salary" class="user-dropdown-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            Salary Insights
+                        </a>
+                        <div class="user-dropdown-divider mobile-only"></div>
+                    </div>
+                    <div class="user-dropdown-divider"></div>
+                    <a href="#" onclick="openRateModal(event)" class="user-dropdown-item" style="color:#ffa726;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffa726" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Rate CVNova ⭐
+                    </a>
+                    <a href="/logout" class="user-dropdown-item logout-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef5350" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+
+<style>
+/* ── Header Nav ─────────────────────────────────────────────────── */
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 4px;
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+    color: var(--text-primary, #e8e8ef);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.icon-btn:hover {
+    background: rgba(124,77,255,0.15);
+    border-color: rgba(124,77,255,0.4);
+    transform: translateY(-1px);
+}
+
+/* ── User Menu ──────────────────────────────────────────────────── */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 4px;
+}
+
+.user-menu-wrap {
+    position: relative;
+}
+
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px 6px 6px;
+    background: rgba(124,77,255,0.08);
+    border: 1px solid rgba(124,77,255,0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-primary, #e8e8ef);
+}
+
+.user-menu-btn:hover {
+    background: rgba(124,77,255,0.15);
+    border-color: rgba(124,77,255,0.4);
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #7c4dff, #b388ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.user-name-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── User Dropdown ──────────────────────────────────────────────── */
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 220px;
+    background: var(--bg-secondary, #12121a);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.user-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.user-avatar-lg {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #7c4dff, #b388ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.user-dropdown-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 4px 0;
+}
+
+.user-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 0.88rem;
+    color: var(--text-primary, #e8e8ef);
+    text-decoration: none;
+    transition: background 0.15s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.user-dropdown-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.logout-item {
+    color: #ef5350;
+    padding-bottom: 12px;
+}
+
+/* Mobile nav links hidden on desktop */
+.mobile-nav-links { display: none; }
+.mobile-only { display: none; }
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .header-nav { display: none; }
+    .mobile-nav-links { display: block; }
+    .mobile-only { display: block; }
+    .user-dropdown { width: 240px; }
+}
+
+@media (max-width: 600px) {
+    .user-name-text { display: none; }
+}
+</style>
+
+<script>
+// ─── Theme Toggle ─────────────────────────────────────────────────────────
+if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+}
+function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+    }
+    updateThemeIcons();
+}
+function updateThemeIcons() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    document.querySelectorAll('.sun-icon').forEach(el => el.style.display = isLight ? 'none' : 'block');
+    document.querySelectorAll('.moon-icon').forEach(el => el.style.display = isLight ? 'block' : 'none');
+}
+document.addEventListener('DOMContentLoaded', updateThemeIcons);
+
+// ─── User Menu Dropdown ───────────────────────────────────────────────────
+const userMenuBtn = document.getElementById('userMenuBtn');
+const userDropdown = document.getElementById('userDropdown');
+
+userMenuBtn && userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = userDropdown.style.display !== 'none';
+    userDropdown.style.display = isOpen ? 'none' : 'block';
+    // Close notif dropdown if open
+    const nd = document.getElementById('notifDropdown');
+    if (nd) nd.style.display = 'none';
+});
+
+document.addEventListener('click', (e) => {
+    if (userDropdown && !userDropdown.contains(e.target) && e.target !== userMenuBtn) {
+        userDropdown.style.display = 'none';
+    }
+});
+
+// ─── Notifications ────────────────────────────────────────────────────────
+const notifBellBtn = document.getElementById('notifBellBtn');
+const notifDropdown = document.getElementById('notifDropdown');
+const notifBadge = document.getElementById('notifBadge');
+const notifList = document.getElementById('notifList');
+
+async function loadNotifications() {
+    try {
+        const resp = await fetch('/api/notifications');
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const count = data.unread_count || 0;
+        if (count > 0) {
+            notifBadge.textContent = count > 9 ? '9+' : count;
+            notifBadge.style.display = 'flex';
+        } else {
+            notifBadge.style.display = 'none';
+        }
+        renderNotifications(data.notifications || []);
+    } catch (e) { /* silent */ }
+}
+
+function renderNotifications(notifs) {
+    if (!notifs.length) {
+        notifList.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.4);font-size:0.9rem;">No notifications yet</div>';
+        return;
+    }
+    const typeColors = { info: '#bb86fc', success: '#00e676', warning: '#ffa726', reminder: '#03dac5' };
+    notifList.innerHTML = notifs.map(n => `
+        <div onclick="readNotif(${n.id}, '${n.link || ''}')" style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;background:${n.is_read ? 'transparent' : 'rgba(124,77,255,0.06)'};transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='${n.is_read ? 'transparent' : 'rgba(124,77,255,0.06)'}'">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:8px;height:8px;border-radius:50%;background:${typeColors[n.type]||'#bb86fc'};margin-top:5px;flex-shrink:0;${n.is_read ? 'opacity:0.3' : ''}"></div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:${n.is_read ? '400' : '600'};font-size:0.88rem;color:var(--text-primary,#fff);margin-bottom:2px;">${escapeHtmlNotif(n.title)}</div>
+                    <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.4;">${escapeHtmlNotif(n.message)}</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:4px;">${timeAgo(n.created_at)}</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function readNotif(id, link) {
+    await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+    if (link) window.location.href = link;
+    else loadNotifications();
+}
+
+async function markAllRead() {
+    await fetch('/api/notifications/read-all', { method: 'PUT' });
+    loadNotifications();
+}
+
+notifBellBtn && notifBellBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = notifDropdown.style.display !== 'none';
+    notifDropdown.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) loadNotifications();
+    // Close user dropdown if open
+    if (userDropdown) userDropdown.style.display = 'none';
+});
+
+document.addEventListener('click', (e) => {
+    if (notifDropdown && !notifDropdown.contains(e.target) && e.target !== notifBellBtn) {
+        notifDropdown.style.display = 'none';
+    }
+});
+
+function timeAgo(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function escapeHtmlNotif(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.addEventListener('DOMContentLoaded', loadNotifications);
+setInterval(loadNotifications, 60000);
+</script>
+
+<!-- ═══ Rate CVNova Modal (available on all pages) ═══ -->
+<div id="rateModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#12121a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;width:100%;max-width:460px;position:relative;">
+        <button onclick="closeRateModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+        <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:4px;">Rate CVNova ✨</h2>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.88rem;margin-bottom:24px;">Your review will appear on our landing page!</p>
+        <!-- Stars -->
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:10px;">Your Rating *</label>
+            <div style="display:flex;gap:10px;" id="rateStarPicker">
+                <span class="rate-star" data-val="1" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="rate-star" data-val="2" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="rate-star" data-val="3" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="rate-star" data-val="4" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="rate-star" data-val="5" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+            </div>
+        </div>
+        <!-- Job Title -->
+        <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">Your Role (optional)</label>
+            <input type="text" id="rateJobTitle" placeholder="e.g. Software Engineer @ Google"
+                style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.88rem;outline:none;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        </div>
+        <!-- Review -->
+        <div style="margin-bottom:22px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">
+                Your Review * <span id="rateCharCount" style="color:rgba(255,255,255,0.25);">(0/500)</span>
+            </label>
+            <textarea id="rateReview" rows="4" placeholder="How did CVNova help you? What features did you love?"
+                style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.88rem;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+                oninput="document.getElementById('rateCharCount').textContent='('+this.value.length+'/500)'"></textarea>
+        </div>
+        <button onclick="submitRate()" id="rateSubmitBtn"
+            style="width:100%;padding:13px;background:linear-gradient(135deg,#7c4dff,#b388ff);color:white;border:none;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;">
+            🚀 Submit Review
+        </button>
+        <div id="rateError" style="display:none;margin-top:10px;color:#ff5252;font-size:0.83rem;text-align:center;"></div>
+    </div>
+</div>
+
+<script>
+let _rateVal = 0;
+
+function openRateModal(e) {
+    if (e) e.preventDefault();
+    // Close user dropdown
+    const ud = document.getElementById('userDropdown');
+    if (ud) ud.style.display = 'none';
+    // Load existing review
+    fetch('/api/feedback/mine').then(r => r.json()).then(ex => {
+        if (ex && ex.id) {
+            _rateVal = ex.rating;
+            document.getElementById('rateReview').value = ex.review;
+            document.getElementById('rateJobTitle').value = ex.job_title || '';
+            document.getElementById('rateCharCount').textContent = `(${ex.review.length}/500)`;
+            _updateRateStars(_rateVal);
+        }
+    }).catch(() => {});
+    document.getElementById('rateModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeRateModal() {
+    document.getElementById('rateModal').style.display = 'none';
+    document.body.style.overflow = '';
+    _rateVal = 0;
+    document.getElementById('rateReview').value = '';
+    document.getElementById('rateJobTitle').value = '';
+    document.getElementById('rateError').style.display = 'none';
+    document.getElementById('rateCharCount').textContent = '(0/500)';
+    _updateRateStars(0);
+}
+
+function _updateRateStars(val) {
+    document.querySelectorAll('.rate-star').forEach(s => {
+        const v = parseInt(s.dataset.val);
+        s.style.color = v <= val ? '#ffa726' : 'rgba(255,255,255,0.2)';
+        s.style.transform = v <= val ? 'scale(1.15)' : 'scale(1)';
+    });
+}
+
+document.querySelectorAll('.rate-star').forEach(s => {
+    s.addEventListener('click', () => { _rateVal = parseInt(s.dataset.val); _updateRateStars(_rateVal); });
+    s.addEventListener('mouseover', () => _updateRateStars(parseInt(s.dataset.val)));
+    s.addEventListener('mouseout', () => _updateRateStars(_rateVal));
+});
+
+document.getElementById('rateModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('rateModal')) closeRateModal();
+});
+
+async function submitRate() {
+    const review = document.getElementById('rateReview').value.trim();
+    const jobTitle = document.getElementById('rateJobTitle').value.trim();
+    const errEl = document.getElementById('rateError');
+    const btn = document.getElementById('rateSubmitBtn');
+    errEl.style.display = 'none';
+    if (!_rateVal) { errEl.textContent = '⭐ Please select a star rating!'; errEl.style.display = 'block'; return; }
+    if (!review || review.length < 10) { errEl.textContent = 'Review must be at least 10 characters.'; errEl.style.display = 'block'; return; }
+    btn.textContent = 'Submitting...'; btn.disabled = true;
+    try {
+        const resp = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ rating: _rateVal, review, job_title: jobTitle })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Failed');
+        closeRateModal();
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(0,230,118,0.4);color:#00e676;padding:14px 28px;border-radius:12px;font-size:0.9rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+        toast.textContent = '🎉 Thank you! Your review is live on our landing page!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    } catch(e) {
+        errEl.textContent = e.message; errEl.style.display = 'block';
+    }
+    btn.textContent = '🚀 Submit Review'; btn.disabled = false;
+}
+</script>

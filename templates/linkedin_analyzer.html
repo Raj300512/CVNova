@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — LinkedIn Profile Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <style>
+        .li-container { max-width: 900px; margin: 0 auto; padding: 100px 24px 60px; }
+        .li-hero { text-align: center; margin-bottom: 40px; }
+        .li-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .li-hero p { color: var(--text-secondary); font-size: 1.05rem; }
+        .li-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; }
+        .li-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+        .li-textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; min-height: 200px; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+        .li-textarea:focus { border-color: #0077b5; }
+        .li-select { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; cursor: pointer; }
+        .li-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #0077b5, #00a0dc); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; margin-top: 20px; }
+        .li-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,119,181,0.4); }
+        .li-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .li-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .li-step { background: rgba(0,119,181,0.08); border: 1px solid rgba(0,119,181,0.2); border-radius: 12px; padding: 20px; text-align: center; }
+        .li-step-num { width: 32px; height: 32px; background: #0077b5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin: 0 auto 10px; }
+        .li-step h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+        .li-step p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+        .result-section { display: none; }
+        .score-big { font-size: 4rem; font-weight: 900; background: linear-gradient(135deg, #0077b5, #00e676); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .skill-chip { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 500; margin: 4px; }
+        .chip-found { background: rgba(0,230,118,0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+        .chip-missing { background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid rgba(255,82,82,0.3); }
+        .spinner-sm { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @media (max-width: 600px) { .li-steps { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+{% include 'partials/header.html' %}
+
+<main class="li-container fade-in">
+    <div class="li-hero">
+        <h1>🔗 LinkedIn Profile <span class="gradient-text">Analyzer</span></h1>
+        <p>Paste your LinkedIn profile text and get instant ATS scoring, skill gap analysis, and career insights.</p>
+    </div>
+
+    <!-- How it works -->
+    <div class="li-steps">
+        <div class="li-step">
+            <div class="li-step-num">1</div>
+            <h4>Open LinkedIn</h4>
+            <p>Go to your LinkedIn profile and click "More → Save to PDF"</p>
+        </div>
+        <div class="li-step">
+            <div class="li-step-num">2</div>
+            <h4>Copy Text</h4>
+            <p>Open the PDF, select all text (Ctrl+A), and copy it</p>
+        </div>
+        <div class="li-step">
+            <div class="li-step-num">3</div>
+            <h4>Paste & Analyze</h4>
+            <p>Paste below and click Analyze to get your score</p>
+        </div>
+    </div>
+
+    <div class="li-card">
+        <label class="li-label" for="liText">Your LinkedIn Profile Text</label>
+        <textarea id="liText" class="li-textarea" placeholder="Paste your LinkedIn profile text here...&#10;&#10;Example:&#10;John Doe&#10;Software Engineer at Google&#10;&#10;Experience&#10;Google — Senior Software Engineer (2021 - Present)&#10;• Led development of..."></textarea>
+
+        <div style="margin-top: 20px;">
+            <label class="li-label" for="liRole">Target Job Role</label>
+            <select id="liRole" class="li-select">
+                {% for role in roles %}
+                <option value="{{ role.id }}">{{ role.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button class="li-btn" id="liAnalyzeBtn">
+            <span id="liBtnText" style="display:flex;align-items:center;gap:8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Analyze LinkedIn Profile
+            </span>
+            <span id="liBtnLoading" style="display:none;align-items:center;gap:8px;">
+                <div class="spinner-sm"></div> Analyzing...
+            </span>
+        </button>
+    </div>
+
+    <!-- Results -->
+    <div class="result-section" id="liResults">
+        <div class="li-card" style="text-align:center;">
+            <p style="color:var(--text-secondary);margin-bottom:8px;">LinkedIn ATS Score</p>
+            <div class="score-big" id="liScore">0</div>
+            <p style="color:var(--text-secondary);font-size:0.9rem;" id="liScoreLabel">/ 100</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div class="li-card">
+                <h3 style="margin-bottom:16px;color:#00e676;">✅ Found Skills</h3>
+                <div id="liFoundSkills"></div>
+            </div>
+            <div class="li-card">
+                <h3 style="margin-bottom:16px;color:#ff5252;">❌ Missing Skills</h3>
+                <div id="liMissingSkills"></div>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h3 style="margin-bottom:16px;">💪 Strengths</h3>
+            <div id="liStrengths"></div>
+        </div>
+
+        <div class="li-card">
+            <h3 style="margin-bottom:16px;">⚠️ Areas to Improve</h3>
+            <div id="liWeaknesses"></div>
+        </div>
+
+        <div style="text-align:center;margin-top:16px;">
+            <a href="/" class="li-btn" style="display:inline-flex;width:auto;padding:14px 32px;text-decoration:none;background:linear-gradient(135deg,#7c4dff,#bb86fc);">
+                Upload Full Resume for Deeper Analysis →
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+document.getElementById('liAnalyzeBtn').addEventListener('click', async () => {
+    const text = document.getElementById('liText').value.trim();
+    const role = document.getElementById('liRole').value;
+    if (!text || text.length < 100) {
+        alert('Please paste at least 100 characters of your LinkedIn profile text.');
+        return;
+    }
+    document.getElementById('liBtnText').style.display = 'none';
+    document.getElementById('liBtnLoading').style.display = 'flex';
+    document.getElementById('liAnalyzeBtn').disabled = true;
+
+    try {
+        const resp = await fetch('/api/analyze-linkedin-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profile_text: text, job_role: role })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Analysis failed');
+
+        document.getElementById('liScore').textContent = data.ats_score?.total || 0;
+        document.getElementById('liFoundSkills').innerHTML = (data.found_skills || []).map(s => `<span class="skill-chip chip-found">${s}</span>`).join('') || '<p style="color:var(--text-secondary)">None detected</p>';
+        document.getElementById('liMissingSkills').innerHTML = (data.missing_skills || []).slice(0, 15).map(s => `<span class="skill-chip chip-missing">${s}</span>`).join('') || '<p style="color:var(--text-secondary)">None missing!</p>';
+        document.getElementById('liStrengths').innerHTML = (data.strengths || []).map(s => `<div style="padding:10px;background:rgba(0,230,118,0.08);border-radius:8px;margin-bottom:8px;font-size:0.9rem;"><strong>${s.title}:</strong> ${s.detail}</div>`).join('') || '<p style="color:var(--text-secondary)">No strengths detected</p>';
+        document.getElementById('liWeaknesses').innerHTML = (data.weaknesses || []).map(w => `<div style="padding:10px;background:rgba(255,82,82,0.08);border-radius:8px;margin-bottom:8px;font-size:0.9rem;"><strong>${w.title}:</strong> ${w.detail}</div>`).join('') || '<p style="color:var(--text-secondary)">No issues found!</p>';
+
+        document.getElementById('liResults').style.display = 'block';
+        document.getElementById('liResults').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        alert('Error: ' + e.message);
+    } finally {
+        document.getElementById('liBtnText').style.display = 'flex';
+        document.getElementById('liBtnLoading').style.display = 'none';
+        document.getElementById('liAnalyzeBtn').disabled = false;
+    }
+});
+</script>
+</body>
+</html>

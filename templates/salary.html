@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova — Salary Insights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sal-container { max-width: 1000px; margin: 0 auto; padding: 100px 24px 60px; }
+        .sal-hero { text-align: center; margin-bottom: 40px; }
+        .sal-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .sal-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+        .sal-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: end; }
+        .sal-label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+        .sal-select, .sal-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; box-sizing: border-box; }
+        .sal-btn { padding: 12px 24px; background: linear-gradient(135deg, #00e676, #00b248); border: none; border-radius: 10px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .sal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,230,118,0.4); }
+        .sal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .sal-level { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+        .sal-level-name { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .sal-level-val { font-size: 1.6rem; font-weight: 900; }
+        .sal-level-yoe { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+        .entry-color { color: #03dac5; }
+        .mid-color { color: #bb86fc; }
+        .senior-color { color: #ffa726; }
+        .lead-color { color: #ef5350; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; }
+        .badge-growing { background: rgba(0,230,118,0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3); }
+        .badge-stable { background: rgba(187,134,252,0.15); color: #bb86fc; border: 1px solid rgba(187,134,252,0.3); }
+        .badge-high { background: rgba(255,167,38,0.15); color: #ffa726; border: 1px solid rgba(255,167,38,0.3); }
+        .company-chip { display: inline-block; padding: 6px 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 20px; font-size: 0.85rem; margin: 4px; }
+        #salaryResults { display: none; }
+        @media (max-width: 700px) { .sal-form { grid-template-columns: 1fr; } .sal-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+{% include 'partials/header.html' %}
+
+<main class="sal-container fade-in">
+    <div class="sal-hero">
+        <h1>💰 Salary <span class="gradient-text">Insights</span></h1>
+        <p style="color:var(--text-secondary)">Explore market salary ranges for any role and location. Make informed career decisions.</p>
+    </div>
+
+    <div class="sal-card">
+        <div class="sal-form">
+            <div>
+                <label class="sal-label" for="salRole">Job Role</label>
+                <select id="salRole" class="sal-select">
+                    {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="sal-label" for="salLocation">Location</label>
+                <input type="text" id="salLocation" class="sal-input" placeholder="e.g. San Francisco, India, Remote" value="United States">
+            </div>
+            <button class="sal-btn" id="salBtn">Get Insights</button>
+        </div>
+    </div>
+
+    <div id="salaryResults">
+        <!-- Meta badges -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;" id="salMeta"></div>
+
+        <!-- Salary levels -->
+        <div class="sal-grid" id="salLevels"></div>
+
+        <!-- Chart -->
+        <div class="sal-card">
+            <h3 style="margin-bottom:20px;">Salary by Experience</h3>
+            <div style="position:relative;height:280px;">
+                <canvas id="salChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top companies -->
+        <div class="sal-card">
+            <h3 style="margin-bottom:16px;">🏢 Top Paying Companies</h3>
+            <div id="salCompanies"></div>
+        </div>
+    </div>
+</main>
+
+<script>
+let salChartInstance = null;
+
+document.getElementById('salBtn').addEventListener('click', fetchSalary);
+document.getElementById('salRole').addEventListener('change', fetchSalary);
+document.addEventListener('DOMContentLoaded', fetchSalary);
+
+async function fetchSalary() {
+    const role = document.getElementById('salRole').value;
+    const location = document.getElementById('salLocation').value.trim() || 'United States';
+    const roleText = document.getElementById('salRole').options[document.getElementById('salRole').selectedIndex].text;
+
+    try {
+        const resp = await fetch(`/api/salary-insights?role=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}`);
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error);
+
+        // Use currency symbol from API
+        const sym = data.currency_symbol || '$';
+        const cur = data.currency || 'USD';
+
+        // Format number based on currency - proper local format for each country
+        function fmtSal(val) {
+            val = Math.round(val);
+            switch(cur) {
+                // Indian format - Lakhs / Crores
+                case 'INR':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(2) + ' Cr';
+                    if (val >= 100000)   return sym + (val/100000).toFixed(2) + ' L';
+                    return sym + val.toLocaleString('en-IN');
+
+                // Japanese Yen - Man (10,000)
+                case 'JPY':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(1) + '千万';
+                    if (val >= 10000)    return sym + Math.round(val/10000) + '万';
+                    return sym + val.toLocaleString('ja-JP');
+
+                // Korean Won - Man-won
+                case 'KRW':
+                    if (val >= 100000000) return sym + (val/100000000).toFixed(1) + '억';
+                    if (val >= 10000)     return sym + Math.round(val/10000) + '만';
+                    return sym + val.toLocaleString('ko-KR');
+
+                // Indonesian Rupiah - Juta (million)
+                case 'IDR':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + ' M';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + ' Jt';
+                    return sym + val.toLocaleString('id-ID');
+
+                // Vietnamese Dong - Trieu (million)
+                case 'VND':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + ' tỷ';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + ' tr';
+                    return sym + val.toLocaleString('vi-VN');
+
+                // Pakistani Rupee - Lakh / Crore
+                case 'PKR':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(2) + ' Cr';
+                    if (val >= 100000)   return sym + (val/100000).toFixed(2) + ' L';
+                    return sym + val.toLocaleString();
+
+                // Bangladeshi Taka - Lakh / Crore
+                case 'BDT':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(2) + ' Cr';
+                    if (val >= 100000)   return sym + (val/100000).toFixed(2) + ' L';
+                    return sym + val.toLocaleString();
+
+                // Nigerian Naira - Million
+                case 'NGN':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + 'B';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + 'M';
+                    return sym + val.toLocaleString();
+
+                // Argentine Peso - Million
+                case 'ARS':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + 'B';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + 'M';
+                    return sym + val.toLocaleString();
+
+                // Colombian Peso - Million
+                case 'COP':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + 'B';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + 'M';
+                    return sym + val.toLocaleString();
+
+                // Chilean Peso - Million
+                case 'CLP':
+                    if (val >= 1000000000) return sym + (val/1000000000).toFixed(1) + 'B';
+                    if (val >= 1000000)    return sym + (val/1000000).toFixed(1) + 'M';
+                    return sym + val.toLocaleString();
+
+                // Turkish Lira - Bin (thousand)
+                case 'TRY':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString('tr-TR');
+
+                // Russian Ruble - Thousand
+                case 'RUB':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString('ru-RU');
+
+                // Sri Lankan Rupee - Lakh
+                case 'LKR':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(2) + ' Cr';
+                    if (val >= 100000)   return sym + (val/100000).toFixed(2) + ' L';
+                    return sym + val.toLocaleString();
+
+                // Nepali Rupee - Lakh
+                case 'NPR':
+                    if (val >= 10000000) return sym + (val/10000000).toFixed(2) + ' Cr';
+                    if (val >= 100000)   return sym + (val/100000).toFixed(2) + ' L';
+                    return sym + val.toLocaleString();
+
+                // Philippine Peso - Thousand
+                case 'PHP':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString('fil-PH');
+
+                // Malaysian Ringgit - Thousand
+                case 'MYR':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString();
+
+                // Thai Baht - Thousand
+                case 'THB':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString('th-TH');
+
+                // Egyptian Pound - Thousand
+                case 'EGP':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString();
+
+                // Kenyan Shilling - Thousand
+                case 'KES':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString();
+
+                // South African Rand - Thousand
+                case 'ZAR':
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString('af-ZA');
+
+                // Default: USD, GBP, EUR, CAD, AUD, SGD, CHF, SEK, NOK, DKK, NZD, AED, ILS, PLN
+                default:
+                    if (val >= 1000000) return sym + (val/1000000).toFixed(1) + 'M';
+                    if (val >= 1000)    return sym + (val/1000).toFixed(0) + 'K';
+                    return sym + val.toLocaleString();
+            }
+        }
+
+        // Meta badges
+        document.getElementById('salMeta').innerHTML = `
+            <span class="badge ${data.market_trend === 'Growing' ? 'badge-growing' : 'badge-stable'}">📈 ${data.market_trend} Market</span>
+            <span class="badge badge-high">🔥 Demand: ${data.demand}</span>
+            <span class="badge badge-stable">📍 ${data.location}</span>
+            <span class="badge" style="background:rgba(41,182,246,0.15);color:#29b6f6;border:1px solid rgba(41,182,246,0.3);">💱 ${cur}</span>
+        `;
+
+        // Salary levels
+        const levels = [
+            { key: 'entry', label: 'Entry Level', yoe: '0-2 years', cls: 'entry-color' },
+            { key: 'mid', label: 'Mid Level', yoe: '3-5 years', cls: 'mid-color' },
+            { key: 'senior', label: 'Senior Level', yoe: '6-9 years', cls: 'senior-color' },
+            { key: 'lead', label: 'Lead / Staff', yoe: '10+ years', cls: 'lead-color' },
+        ];
+        document.getElementById('salLevels').innerHTML = levels.map(l => `
+            <div class="sal-level">
+                <div class="sal-level-name">${l.label}</div>
+                <div class="sal-level-val ${l.cls}">${fmtSal(data.salaries[l.key] || 0)}</div>
+                <div class="sal-level-yoe">${l.yoe}</div>
+            </div>
+        `).join('');
+
+        // Chart
+        if (salChartInstance) salChartInstance.destroy();
+        const ctx = document.getElementById('salChart').getContext('2d');
+        salChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.yoe_breakdown.map(y => y.years),
+                datasets: [{
+                    label: `${roleText} Salary (${cur})`,
+                    data: data.yoe_breakdown.map(y => y.salary),
+                    backgroundColor: ['rgba(3,218,197,0.7)', 'rgba(187,134,252,0.7)', 'rgba(255,167,38,0.7)', 'rgba(239,83,80,0.7)'],
+                    borderColor: ['#03dac5', '#bb86fc', '#ffa726', '#ef5350'],
+                    borderWidth: 2,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: 'rgba(255,255,255,0.7)' } } },
+                scales: {
+                    x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: {
+                        ticks: { color: 'rgba(255,255,255,0.6)', callback: v => fmtSal(v) },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+
+        // Companies
+        document.getElementById('salCompanies').innerHTML = (data.top_companies || []).map(c => `<span class="company-chip">${c}</span>`).join('');
+
+        document.getElementById('salaryResults').style.display = 'block';
+    } catch (e) {
+        console.error(e);
+    }
+}
+</script>
+</body>
+</html>

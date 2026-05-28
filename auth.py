@@ -84,12 +84,17 @@ def register():
             flash('Please fill in all fields.', 'error')
             return render_template('register.html')
 
+        if not User.validate_email(email):
+            flash('Please enter a valid email address.', 'error')
+            return render_template('register.html')
+
         if password != confirm_password:
             flash('Passwords do not match.', 'error')
             return render_template('register.html')
 
-        if len(password) < 6:
-            flash('Password must be at least 6 characters.', 'error')
+        is_valid, msg = User.validate_password(password)
+        if not is_valid:
+            flash(msg, 'error')
             return render_template('register.html')
 
         existing_user = User.query.filter_by(email=email).first()

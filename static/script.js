@@ -4,6 +4,24 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ─── Hero Dynamic Text Logic ────────────────────────────────────────
+    const dynamicTexts = document.querySelectorAll('.dynamic-text');
+    if (dynamicTexts.length > 0) {
+        let currentIndex = 0;
+        setInterval(() => {
+            const current = dynamicTexts[currentIndex];
+            current.classList.remove('active');
+            current.classList.add('out');
+            
+            setTimeout(() => {
+                current.classList.remove('out');
+            }, 600); // wait for transition to finish
+
+            currentIndex = (currentIndex + 1) % dynamicTexts.length;
+            dynamicTexts[currentIndex].classList.add('active');
+        }, 2500); // Change text every 2.5 seconds
+    }
+
     // ─── Upload Page Logic ──────────────────────────────────────────────
     const uploadForm = document.getElementById('uploadForm');
     if (uploadForm) {
@@ -196,6 +214,18 @@ function initDashboard() {
     if (downloadBtn) {
         downloadBtn.addEventListener('click', () => downloadReport(results));
     }
+
+    // Share Analysis Button
+    const shareBtn = document.getElementById('shareAnalysisBtn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => shareAnalysis(results));
+    }
+
+    // Save for Comparison Button
+    const saveCompareBtn = document.getElementById('saveForCompareBtn');
+    if (saveCompareBtn) {
+        saveCompareBtn.addEventListener('click', () => saveForCompare(results));
+    }
 }
 
 
@@ -222,6 +252,7 @@ function renderResults(data) {
     renderInsightsTab(data);
     renderAiRewriteTab(data);
     renderCareersTab(data);
+    renderAnalyticsTab();
 }
 
 function initTabs(data) {
@@ -253,6 +284,136 @@ function initTabs(data) {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* ─── TAB RENDERERS ───────────────────────────────────────────────────────── */
 /* ═══════════════════════════════════════════════════════════════════════════ */
+
+async function renderAnalyticsTab() {
+    try {
+        const response = await fetch('/api/analytics');
+        if (!response.ok) throw new Error('Failed to fetch analytics');
+        const history = await response.json();
+
+        const empty = document.getElementById('analyticsEmpty');
+        const chartWrapper = document.getElementById('chartWrapper');
+
+        if (history.error || history.length === 0) {
+            if (empty) empty.style.display = 'block';
+            if (chartWrapper) chartWrapper.style.display = 'none';
+            return;
+        }
+
+        if (empty) empty.style.display = 'none';
+        if (chartWrapper) chartWrapper.style.display = 'block';
+
+        // ── Summary Stats ──────────────────────────────────────────────
+        const scores = history.map(h => h.ats_score);
+        const best = Math.max(...scores);
+        const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        const improvement = scores.length > 1 ? scores[scores.length - 1] - scores[0] : 0;
+
+        const el = id => document.getElementById(id);
+        if (el('statTotalUploads')) el('statTotalUploads').textContent = history.length;
+        if (el('statBestScore'))    el('statBestScore').textContent = best + '%';
+        if (el('statAvgScore'))     el('statAvgScore').textContent = avg + '%';
+        if (el('statImprovement'))  {
+            el('statImprovement').textContent = (improvement >= 0 ? '+' : '') + improvement + '%';
+            el('statImprovement').style.color = improvement >= 0 ? '#00e676' : '#ff5252';
+        }
+
+        // ── History Table ──────────────────────────────────────────────
+        const tbody = document.getElementById('analyticsHistoryTable');
+        if (tbody) {
+            tbody.innerHTML = history.slice().reverse().map(h => {
+                const date = new Date(h.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const scoreColor = h.ats_score >= 80 ? '#00e676' : h.ats_score >= 60 ? '#ffa726' : '#ff5252';
+                const badge = h.ats_score >= 80 ? '🟢' : h.ats_score >= 60 ? '🟡' : '🔴';
+                return `
+                    <tr style="border-bottom:1px solid var(--border);transition:background 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.03)'"
+                        onmouseout="this.style.background=''">
+                        <td style="padding:12px 16px;color:var(--text-secondary);font-size:0.85rem;">${date}</td>
+                        <td style="padding:12px 16px;font-size:0.85rem;">${h.filename}</td>
+                        <td style="padding:12px 16px;font-size:0.85rem;color:var(--text-secondary);">${h.role.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</td>
+                        <td style="padding:12px 16px;">
+                            <span style="font-weight:700;color:${scoreColor};">${badge} ${h.ats_score}%</span>
+                        </td>
+                        <td style="padding:12px 16px;color:var(--text-muted);font-size:0.85rem;">${h.word_count || '—'}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        // ── Chart ──────────────────────────────────────────────────────
+        const ctx = document.getElementById('analyticsChart');
+        if (ctx) {
+            // Destroy existing chart if any
+            if (window._analyticsChartInstance) {
+                window._analyticsChartInstance.destroy();
+            }
+            const labels = history.map(h => new Date(h.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            const dataPoints = history.map(h => h.ats_score);
+
+            window._analyticsChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'ATS Score',
+                        data: dataPoints,
+                        borderColor: '#bb86fc',
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const { ctx: c, chartArea } = chart;
+                            if (!chartArea) return 'transparent';
+                            const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(187,134,252,0.3)');
+                            gradient.addColorStop(1, 'rgba(187,134,252,0.0)');
+                            return gradient;
+                        },
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#bb86fc',
+                        pointBorderColor: '#0a0a0f',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: Math.max(0, Math.min(...dataPoints) - 10),
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#8e8ea0', font: { size: 11 }, callback: v => v + '%' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#8e8ea0', font: { size: 11 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(18,18,30,0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#e8e8ef',
+                            borderColor: 'rgba(187,134,252,0.3)',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => ` ATS Score: ${ctx.parsed.y}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Error rendering analytics:", err);
+    }
+}
 
 function renderOverviewTab(data) {
     if (!data) return;
@@ -928,8 +1089,73 @@ function formatFileSize(bytes) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* ─── BUNNY AI COMPANION ─────────────────────────────────────────────────── */
+/* ─── FEATURE 9: Share Analysis ──────────────────────────────────────────── */
 /* ═══════════════════════════════════════════════════════════════════════════ */
+
+async function shareAnalysis(data) {
+    try {
+        const resp = await fetch('/api/share-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                role: data.role,
+                ats_score: data.ats_score,
+                found_skills: data.found_skills,
+                missing_skills: data.missing_skills,
+                strengths: data.strengths,
+                weaknesses: data.weaknesses
+            })
+        });
+        const result = await resp.json();
+        const fullUrl = window.location.origin + result.url;
+        await navigator.clipboard.writeText(fullUrl);
+
+        // Show toast
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(0,230,118,0.4);color:#00e676;padding:12px 24px;border-radius:10px;font-size:0.9rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+        toast.textContent = '🔗 Share link copied to clipboard!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    } catch (e) {
+        alert('Could not generate share link: ' + e.message);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ─── FEATURE 3: Save for Comparison ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+async function saveForCompare(data) {
+    const name = prompt('Name this version (e.g. "Updated Resume v2"):', `Version ${new Date().toLocaleDateString()}`);
+    if (!name) return;
+
+    // We need the resume text — get from sessionStorage if available
+    const stored = JSON.parse(sessionStorage.getItem('analysisResults') || '{}');
+    const resumeText = stored.resume_text || '';
+
+    try {
+        const resp = await fetch('/api/resume-versions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                resume_text: resumeText || `Score: ${data.ats_score?.total} | Role: ${data.role}`,
+                job_role: data.role,
+                name: name
+            })
+        });
+        if (resp.ok) {
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(187,134,252,0.4);color:#bb86fc;padding:12px 24px;border-radius:10px;font-size:0.9rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+            toast.innerHTML = '✅ Saved! <a href="/compare" style="color:#00e676;margin-left:8px;">View in Compare →</a>';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    } catch (e) {
+        alert('Error saving: ' + e.message);
+    }
+}
+
+
 
 function initChatWidget() {
     const launcher = document.getElementById('bunnyLauncher');

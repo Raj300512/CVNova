@@ -1,29 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OPTION 1: Modern Minimal - Blue Gradient with CV Icon -->
 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="forge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#00e5ff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#2979ff;stop-opacity:1" />
+    <linearGradient id="blue1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4facfe"/>
+      <stop offset="100%" stop-color="#00f2fe"/>
     </linearGradient>
-    <filter id="forge-glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="2" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
   </defs>
+
+  <!-- Rounded Square Background -->
+  <rect width="40" height="40" rx="10" fill="url(#blue1)"/>
+
+  <!-- CV Letters -->
+  <text x="20" y="27" font-family="Arial, sans-serif" font-size="18" font-weight="900" 
+        fill="white" text-anchor="middle" letter-spacing="-1">CV</text>
   
-  <!-- Stylized Anvil / Base -->
-  <path d="M10 28H30L32 32H8L10 28Z" fill="url(#forge-gradient)" opacity="0.8" />
-  <path d="M14 28V24H26V28" stroke="url(#forge-gradient)" stroke-width="2" />
-  
-  <!-- Digital Document / Blade -->
-  <path d="M12 8C12 6.89543 12.8954 6 14 6H22L28 12V24C28 25.1046 27.1046 26 26 26H14C12.8954 26 12 25.1046 12 24V8Z" 
-        stroke="url(#forge-gradient)" stroke-width="2.5" filter="url(#forge-glow)" />
-  <path d="M22 6V12H28" stroke="url(#forge-gradient)" stroke-width="2" />
-  
-  <!-- Spark / Node -->
-  <circle cx="28" cy="12" r="2" fill="#fff" filter="url(#forge-glow)">
-    <animate attributeName="r" values="1.5;2.5;1.5" dur="1.5s" repeatCount="indefinite" />
-  </circle>
-  
-  <!-- Hammer Stroke / Power Line -->
-  <path d="M6 18H10L12 24L16 12L18 18H22" stroke="#fff" stroke-width="1.5" opacity="0.6" stroke-linecap="round" />
+  <!-- Checkmark (Success Symbol) -->
+  <path d="M28 12L30 14L34 10" stroke="white" stroke-width="2" stroke-linecap="round" 
+        stroke-linejoin="round" fill="none" opacity="0.9"/>
 </svg>

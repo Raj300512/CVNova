@@ -676,6 +676,7 @@ def analyze_resume(text, job_role="software_engineer", job_description="", custo
         "role": role_data["title"],
         "is_custom_role": is_custom,
         "word_count": word_count,
+        "resume_text": text,
         "sections_found": sections_found,
         "found_skills": sorted(found_skills),
         "missing_skills": sorted(missing_skills),

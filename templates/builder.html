@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVNova | Live Resume Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='builder.css') }}">
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        function toggleTheme() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons();
+        }
+        function updateThemeIcons() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            document.querySelectorAll('.sun-icon').forEach(el => el.style.display = isLight ? 'none' : 'block');
+            document.querySelectorAll('.moon-icon').forEach(el => el.style.display = isLight ? 'block' : 'none');
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcons);
+    </script>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+
+    {% include 'partials/header.html' %}
+
+    <main class="builder-main">
+        <div class="builder-container">
+            
+            <!-- LEFT PANEL: EDITOR -->
+            <div class="editor-panel glass-panel">
+                <div class="panel-header">
+                    <h2>Live Editor</h2>
+                    <div class="header-actions">
+                        <select id="roleSelect" class="form-select">
+                            {% for role in roles %}
+                                <option value="{{ role.id }}">{{ role.title }}</option>
+                            {% endfor %}
+                            <option value="custom">Other (Custom)</option>
+                        </select>
+                        <input type="text" id="customRoleInput" class="form-input" placeholder="e.g. UX Writer" style="display:none; width:150px;">
+                        
+                        <button id="importLinkedinBtn" class="btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                            Import LinkedIn PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <textarea id="resumeEditor" class="resume-textarea" placeholder="Paste your resume text here, or type it out..."></textarea>
+                
+                <!-- Hidden form for LinkedIn Upload -->
+                <input type="file" id="linkedinUpload" accept="application/pdf" style="display:none;">
+            </div>
+
+            <!-- RIGHT PANEL: LIVE ANALYSIS -->
+            <div class="analysis-panel glass-panel">
+                <div class="panel-header">
+                    <h2>Live Analysis</h2>
+                    <div class="status-indicator" id="syncStatus">
+                        <span class="dot green"></span> Synced
+                    </div>
+                </div>
+
+                <div class="score-section">
+                    <div class="score-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="score-fill" id="liveScoreFill" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div class="score-text">
+                            <span id="liveScoreVal" class="score-number">0</span>
+                        </div>
+                    </div>
+                    <div class="score-info">
+                        <h3>ATS Score</h3>
+                        <p id="liveScoreDesc">Start typing to see your score.</p>
+                    </div>
+                </div>
+
+                <div class="skills-section">
+                    <h3>Found Skills</h3>
+                    <div id="liveFoundSkills" class="skills-container">
+                        <p class="empty-state">No skills detected yet.</p>
+                    </div>
+                    
+                    <h3 style="margin-top:20px;">Missing Skills (Recommended)</h3>
+                    <div id="liveMissingSkills" class="skills-container">
+                        <p class="empty-state">Add a target role to see missing skills.</p>
+                    </div>
+                </div>
+                
+                <div class="tips-section" id="liveTips">
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Overlay Loader -->
+    <div id="builderOverlay" class="builder-overlay" style="display:none;">
+        <div class="spinner"></div>
+        <p id="overlayText">Parsing LinkedIn PDF...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='builder.js') }}"></script>
+</body>
+</html>

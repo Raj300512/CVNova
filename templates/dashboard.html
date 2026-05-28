@@ -8,12 +8,38 @@
     <meta name="description"
         content="Resume analysis results - ATS score, skills breakdown, and improvement suggestions.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/auth.css">
     <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        function toggleTheme() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons();
+        }
+        function updateThemeIcons() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            document.querySelectorAll('.sun-icon').forEach(el => el.style.display = isLight ? 'none' : 'block');
+            document.querySelectorAll('.moon-icon').forEach(el => el.style.display = isLight ? 'block' : 'none');
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcons);
+    </script>
 </head>
+
 
 <body class="dashboard-body">
     <!-- Animated background -->
@@ -21,45 +47,7 @@
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
 
-    <!-- Header -->
-    <header class="header">
-        <a href="/" class="logo" style="text-decoration:none;">
-            <div class="logo-icon">
-                <img src="/static/app_logo.png" alt="CVNova Logo" width="56" height="56">
-            </div>
-            <span class="logo-text">CVNova</span>
-        </a>
-        <div class="header-user">
-            <a href="/jobs" class="btn-new-analysis" style="background: rgba(187, 134, 252, 0.1); color: #bb86fc; border-color: rgba(187, 134, 252, 0.3);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                Find Jobs
-            </a>
-            <a href="/" class="btn-new-analysis">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                New Analysis
-            </a>
-            <div class="user-greeting">
-                <div class="user-avatar">{{ current_user.name[0]|upper }}</div>
-                <span class="user-name">{{ current_user.name }}</span>
-            </div>
-            <a href="/logout" class="btn-logout">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                Logout
-            </a>
-        </div>
-    </header>
+    {% include "partials/header.html" %}
 
     <!-- Dashboard Layout -->
     <div class="dashboard-container">
@@ -144,6 +132,14 @@
                         </svg>
                         AI Resume Rewrite
                     </li>
+                    <li class="nav-item" data-target="tab-analytics">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Analytics
+                    </li>
 
                     <li class="nav-item" data-target="tab-careers">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -152,6 +148,13 @@
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
                         Career Opportunities
+                    </li>
+                    <li class="nav-item" data-target="tab-skill-progress">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Skill Progress
                     </li>
                 </ul>
             </aside>
@@ -166,16 +169,26 @@
                         <p class="dash-subtitle" id="dashSubtitle"></p>
                     </div>
                     <div class="dash-actions">
-                        <button class="btn-secondary" id="downloadReportBtn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                        <button class="btn-secondary" id="saveForCompareBtn" style="display:none;">Save Version</button>
+                        <button class="btn-secondary" id="shareAnalysisBtn" style="background: linear-gradient(135deg, rgba(0,230,118,0.15), rgba(0,230,118,0.05)); color: #00e676; border-color: rgba(0,230,118,0.4);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
+                        <button class="btn-secondary" id="downloadReportBtn" style="background: linear-gradient(135deg, rgba(255,167,38,0.15), rgba(255,167,38,0.05)); color: #ffa726; border-color: rgba(255,167,38,0.4);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3" />
                             </svg>
                             Download Report
                         </button>
+                        <button class="btn-secondary" id="writeFeedbackBtn" onclick="openFeedbackModal()" style="background:linear-gradient(135deg,rgba(255,167,38,0.15),rgba(255,64,129,0.1));color:#ff4081;border-color:rgba(255,64,129,0.4);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            Rate CVNova
+                        </button>
                         <a href="/" class="btn-primary">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 5v14M5 12h14" />
                             </svg>
                             New Analysis
@@ -425,8 +438,88 @@
 
 
                 <!-- ════ TAB: CAREER OPPORTUNITIES ════ -->
-                <div id="tab-careers" class="tab-pane fade-in">
+                <!-- ════ TAB: ANALYTICS ════ -->
+                <div id="tab-analytics" class="tab-pane fade-in">
+                    <!-- Summary Stats -->
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;" id="analyticsSummary">
+                        <div class="glass-card" style="text-align:center;padding:20px;">
+                            <div style="font-size:2rem;font-weight:900;color:#bb86fc;" id="statTotalUploads">—</div>
+                            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">Total Analyses</div>
+                        </div>
+                        <div class="glass-card" style="text-align:center;padding:20px;">
+                            <div style="font-size:2rem;font-weight:900;color:#00e676;" id="statBestScore">—</div>
+                            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">Best ATS Score</div>
+                        </div>
+                        <div class="glass-card" style="text-align:center;padding:20px;">
+                            <div style="font-size:2rem;font-weight:900;color:#29b6f6;" id="statAvgScore">—</div>
+                            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">Average Score</div>
+                        </div>
+                        <div class="glass-card" style="text-align:center;padding:20px;">
+                            <div style="font-size:2rem;font-weight:900;color:#ffa726;" id="statImprovement">—</div>
+                            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">Score Improvement</div>
+                        </div>
+                    </div>
+
+                    <!-- Score Chart -->
+                    <div class="glass-card" style="margin-bottom:24px;">
+                        <h2 class="card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bb86fc" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            ATS Score History
+                        </h2>
+                        <div id="analyticsEmpty" style="display:none;text-align:center;padding:40px;color:var(--text-secondary);">
+                            <div style="font-size:3rem;margin-bottom:12px;">📊</div>
+                            <p>No analysis history yet. Upload a resume to start tracking!</p>
+                        </div>
+                        <div style="position:relative;height:280px;width:100%;" id="chartWrapper">
+                            <canvas id="analyticsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- History Table -->
                     <div class="glass-card">
+                        <h2 class="card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#29b6f6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            Upload History
+                        </h2>
+                        <div style="overflow-x:auto;">
+                            <table style="width:100%;text-align:left;border-collapse:collapse;color:var(--text-primary);">
+                                <thead>
+                                    <tr style="border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;">
+                                        <th style="padding:12px 16px;">Date</th>
+                                        <th style="padding:12px 16px;">Resume File</th>
+                                        <th style="padding:12px 16px;">Target Role</th>
+                                        <th style="padding:12px 16px;">ATS Score</th>
+                                        <th style="padding:12px 16px;">Words</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analyticsHistoryTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-careers" class="tab-pane fade-in">
+                    <!-- Career Opportunities content -->
+                </div>
+
+                <!-- ════ TAB: SKILL PROGRESS ════ -->
+                <div id="tab-skill-progress" class="tab-pane fade-in">
+                    <div class="glass-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+                            <div>
+                                <h2 class="card-title" style="margin-bottom:4px;">🎯 Skill Progress Tracker</h2>
+                                <p style="color:var(--text-secondary);font-size:0.9rem;">Track which missing skills you've learned. Mark them as done to see your progress!</p>
+                            </div>
+                            <button id="trackSkillsBtn" class="btn-primary" style="background: linear-gradient(135deg, rgba(187,134,252,0.2), rgba(124,77,255,0.8)); color: #fff; border-color: rgba(187,134,252,0.5); padding:10px 20px; font-size:0.9rem; box-shadow: 0 4px 15px rgba(124,77,255,0.3);">
+                                + Track Missing Skills
+                            </button>
+                        </div>
+                        <div id="skillProgressStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;"></div>
+                        <div id="skillProgressList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+                            <p style="color:var(--text-secondary);font-size:0.9rem;grid-column:1/-1;">Click "Track Missing Skills" to start tracking your learning progress.</p>
+                        </div>
+                    </div>
+                </div>                   <div class="glass-card">
                         <h2 class="card-title">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00e676"
                                 stroke-width="2">
@@ -449,10 +542,9 @@
 
     <!-- ═══ Bunny AI Companion ═══ -->
 
-    <!-- Floating Bunny Launcher -->
+    <!-- Floating Bunny Launcher — circle only -->
     <button id="bunnyLauncher" class="bunny-launcher" aria-label="Open Bunny AI Assistant">
         <span class="bunny-launcher-icon">🐰</span>
-        <span class="bunny-launcher-text">Need Resume Help?</span>
     </button>
 
     <!-- Chat Panel -->
@@ -550,6 +642,280 @@
     </div>
 
     <script src="/static/script.js"></script>
-</body>
+    <script>
+    // ─── Feature 9: Share Analysis Button ────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        const shareBtn = document.getElementById('shareAnalysisBtn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', async () => {
+                const stored = JSON.parse(sessionStorage.getItem('analysisResults') || '{}');
+                if (!stored.role) { alert('No analysis found. Please analyze a resume first.'); return; }
+
+                try {
+                    const resp = await fetch('/api/share-analysis', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            role: stored.role,
+                            ats_score: stored.ats_score,
+                            found_skills: stored.found_skills,
+                            missing_skills: stored.missing_skills,
+                            strengths: stored.strengths,
+                            weaknesses: stored.weaknesses
+                        })
+                    });
+                    
+                    if (!resp.ok) throw new Error('Failed to generate share link');
+                    
+                    const result = await resp.json();
+                    const fullUrl = window.location.origin + result.url;
+                    await navigator.clipboard.writeText(fullUrl);
+
+                    // Show success toast
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(0,230,118,0.4);color:#00e676;padding:12px 24px;border-radius:10px;font-size:0.9rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+                    toast.textContent = '🔗 Share link copied to clipboard!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                } catch (e) {
+                    alert('Could not generate share link: ' + e.message);
+                }
+            });
+        }
+    });
+
+    // ─── Feature 7: Skill Progress Tracker ───────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        const trackBtn = document.getElementById('trackSkillsBtn');
+        if (trackBtn) {
+            trackBtn.addEventListener('click', async () => {
+                const stored = JSON.parse(sessionStorage.getItem('analysisResults') || '{}');
+                const missing = stored.missing_skills || [];
+                const role = stored.role || 'software_engineer';
+                if (!missing.length) { alert('No missing skills found. Please analyze a resume first.'); return; }
+
+                const resp = await fetch('/api/skill-progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ skills: missing, role: role })
+                });
+                if (resp.ok) loadSkillProgress(role);
+            });
+        }
+    });
+
+    async function loadSkillProgress(role) {
+        if (!role) {
+            const stored = JSON.parse(sessionStorage.getItem('analysisResults') || '{}');
+            role = stored.role || '';
+        }
+        const resp = await fetch(`/api/skill-progress?role=${encodeURIComponent(role)}`);
+        const skills = await resp.json();
+        renderSkillProgress(skills);
+    }
+
+    function renderSkillProgress(skills) {
+        const list = document.getElementById('skillProgressList');
+        const stats = document.getElementById('skillProgressStats');
+        if (!list) return;
+
+        const total = skills.length;
+        const learned = skills.filter(s => s.learned).length;
+        const pct = total > 0 ? Math.round((learned / total) * 100) : 0;
+
+        if (stats) {
+            stats.innerHTML = `
+                <div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:10px;padding:16px;text-align:center;">
+                    <div style="font-size:2rem;font-weight:900;color:#00e676;">${learned}</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">Skills Learned</div>
+                </div>
+                <div style="background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);border-radius:10px;padding:16px;text-align:center;">
+                    <div style="font-size:2rem;font-weight:900;color:#ff5252;">${total - learned}</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">Still Learning</div>
+                </div>
+                <div style="background:rgba(187,134,252,0.08);border:1px solid rgba(187,134,252,0.2);border-radius:10px;padding:16px;text-align:center;">
+                    <div style="font-size:2rem;font-weight:900;color:#bb86fc;">${pct}%</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">Complete</div>
+                </div>
+            `;
+        }
+
+        if (!skills.length) {
+            list.innerHTML = '<p style="color:var(--text-secondary);font-size:0.9rem;grid-column:1/-1;">Click "Track Missing Skills" to start tracking your learning progress.</p>';
+            return;
+        }
+
+        list.innerHTML = skills.map((s, i) => {
+            const colors = [
+                {bg:'rgba(124,77,255,0.1)',border:'rgba(124,77,255,0.3)',color:'#bb86fc'},
+                {bg:'rgba(0,229,255,0.08)',border:'rgba(0,229,255,0.25)',color:'#00e5ff'},
+                {bg:'rgba(255,167,38,0.08)',border:'rgba(255,167,38,0.25)',color:'#ffa726'},
+                {bg:'rgba(41,182,246,0.08)',border:'rgba(41,182,246,0.25)',color:'#29b6f6'},
+                {bg:'rgba(255,64,129,0.08)',border:'rgba(255,64,129,0.25)',color:'#ff4081'},
+            ];
+            const c = s.learned
+                ? {bg:'rgba(0,230,118,0.1)',border:'rgba(0,230,118,0.35)',color:'#00e676'}
+                : colors[i % colors.length];
+            return `
+            <div onclick="toggleSkill(${s.id}, ${!s.learned})"
+                style="background:${c.bg};border:1px solid ${c.border};border-radius:12px;padding:12px 16px;
+                       display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;
+                       ${s.learned ? '' : 'hover:transform:translateY(-2px);'}"
+                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.2)'"
+                onmouseout="this.style.transform='';this.style.boxShadow=''">
+                <div style="width:22px;height:22px;border-radius:50%;border:2px solid ${c.color};
+                            background:${s.learned ? c.color : 'transparent'};
+                            display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;">
+                    ${s.learned ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </div>
+                <span style="font-size:0.85rem;font-weight:600;color:${c.color};
+                             ${s.learned ? 'text-decoration:line-through;opacity:0.6;' : ''}">
+                    ${s.skill_name}
+                </span>
+            </div>`;
+        }).join('');
+    }
+
+    async function toggleSkill(id, learned) {
+        await fetch(`/api/skill-progress/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ learned })
+        });
+        const stored = JSON.parse(sessionStorage.getItem('analysisResults') || '{}');
+        loadSkillProgress(stored.role || '');
+    }
+
+    // Expose to global scope so onclick="toggleSkill(...)" works
+    window.toggleSkill = toggleSkill;
+    window.loadSkillProgress = loadSkillProgress;
+    </script>
 
 </html>
+
+<!-- ═══ Feedback Modal ═══ -->
+<div id="feedbackModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#12121a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;width:100%;max-width:460px;position:relative;">
+        <button onclick="closeFeedbackModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:1.6rem;cursor:pointer;line-height:1;">&times;</button>
+
+        <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:4px;">Rate CVNova ✨</h2>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.88rem;margin-bottom:24px;">Your review will appear on our landing page!</p>
+
+        <!-- Stars -->
+        <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:10px;">Your Rating *</label>
+            <div id="starPicker" style="display:flex;gap:10px;">
+                <span class="star-btn" data-val="1" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="star-btn" data-val="2" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="star-btn" data-val="3" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="star-btn" data-val="4" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+                <span class="star-btn" data-val="5" style="font-size:2.2rem;cursor:pointer;color:rgba(255,255,255,0.2);transition:all 0.15s;">★</span>
+            </div>
+        </div>
+
+        <!-- Job Title -->
+        <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">Your Role (optional)</label>
+            <input type="text" id="fbJobTitle" placeholder="e.g. Software Engineer @ Google"
+                style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.88rem;outline:none;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        </div>
+
+        <!-- Review -->
+        <div style="margin-bottom:22px;">
+            <label style="display:block;font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">
+                Your Review * <span id="fbCharCount" style="color:rgba(255,255,255,0.25);">(0/500)</span>
+            </label>
+            <textarea id="fbReview" rows="4" placeholder="How did CVNova help you? What features did you love?"
+                style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.88rem;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#7c4dff'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+                oninput="document.getElementById('fbCharCount').textContent='('+this.value.length+'/500)'"></textarea>
+        </div>
+
+        <button onclick="submitFeedback()" id="fbSubmitBtn"
+            style="width:100%;padding:13px;background:linear-gradient(135deg,#7c4dff,#b388ff);color:white;border:none;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+            🚀 Submit Review
+        </button>
+        <div id="fbError" style="display:none;margin-top:10px;color:#ff5252;font-size:0.83rem;text-align:center;"></div>
+    </div>
+</div>
+
+<script>
+let fbRating = 0;
+
+function openFeedbackModal() {
+    fetch('/api/feedback/mine').then(r => r.json()).then(existing => {
+        if (existing && existing.id) {
+            fbRating = existing.rating;
+            document.getElementById('fbReview').value = existing.review;
+            document.getElementById('fbJobTitle').value = existing.job_title || '';
+            document.getElementById('fbCharCount').textContent = `(${existing.review.length}/500)`;
+            updateFbStars(fbRating);
+        }
+    }).catch(() => {});
+    document.getElementById('feedbackModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFeedbackModal() {
+    document.getElementById('feedbackModal').style.display = 'none';
+    document.body.style.overflow = '';
+    fbRating = 0;
+    document.getElementById('fbReview').value = '';
+    document.getElementById('fbJobTitle').value = '';
+    document.getElementById('fbError').style.display = 'none';
+    document.getElementById('fbCharCount').textContent = '(0/500)';
+    updateFbStars(0);
+}
+
+function updateFbStars(val) {
+    document.querySelectorAll('.star-btn').forEach(s => {
+        const v = parseInt(s.dataset.val);
+        s.style.color = v <= val ? '#ffa726' : 'rgba(255,255,255,0.2)';
+        s.style.transform = v <= val ? 'scale(1.15)' : 'scale(1)';
+    });
+}
+
+document.querySelectorAll('.star-btn').forEach(s => {
+    s.addEventListener('click', () => { fbRating = parseInt(s.dataset.val); updateFbStars(fbRating); });
+    s.addEventListener('mouseover', () => updateFbStars(parseInt(s.dataset.val)));
+    s.addEventListener('mouseout', () => updateFbStars(fbRating));
+});
+
+document.getElementById('feedbackModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('feedbackModal')) closeFeedbackModal();
+});
+
+async function submitFeedback() {
+    const review = document.getElementById('fbReview').value.trim();
+    const jobTitle = document.getElementById('fbJobTitle').value.trim();
+    const errEl = document.getElementById('fbError');
+    const btn = document.getElementById('fbSubmitBtn');
+    errEl.style.display = 'none';
+
+    if (!fbRating) { errEl.textContent = '⭐ Please select a star rating!'; errEl.style.display = 'block'; return; }
+    if (!review || review.length < 10) { errEl.textContent = 'Review must be at least 10 characters.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Submitting...'; btn.disabled = true;
+
+    try {
+        const resp = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ rating: fbRating, review, job_title: jobTitle })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Failed');
+
+        closeFeedbackModal();
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;border:1px solid rgba(0,230,118,0.4);color:#00e676;padding:14px 28px;border-radius:12px;font-size:0.9rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+        toast.textContent = '🎉 Thank you! Your review is live on our landing page!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    } catch(e) {
+        errEl.textContent = e.message; errEl.style.display = 'block';
+    }
+    btn.textContent = '🚀 Submit Review'; btn.disabled = false;
+}
+</script>
